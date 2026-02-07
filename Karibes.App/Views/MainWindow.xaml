@@ -1,0 +1,186 @@
+<Window x:Class="Karibes.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Karibes - Sistema de Gestão" 
+        Height="800" Width="1400"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BackgroundBrush}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!-- Sidebar fixa -->
+            <ColumnDefinition Width="250"/>
+            <!-- Área de conteúdo -->
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <!-- ============================================ -->
+        <!-- SIDEBAR FIXA -->
+        <!-- ============================================ -->
+        <Border Grid.Column="0" 
+                Background="{StaticResource PanelBrush}" 
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <!-- Cabeçalho da Sidebar -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Botões de Navegação -->
+                    <RowDefinition Height="*"/>
+                    <!-- Seletor de Tema -->
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Cabeçalho: Nome do Sistema -->
+                <Border Grid.Row="0" 
+                        Background="{StaticResource AccentBrush}" 
+                        Padding="20,25">
+                    <TextBlock Text="KARIBES" 
+                               FontSize="28" 
+                               FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryBlackBrush}"
+                               HorizontalAlignment="Center"/>
+                </Border>
+                
+                <!-- Botões de Navegação -->
+                <StackPanel Grid.Row="1" 
+                            Margin="10,20,10,10" 
+                            VerticalAlignment="Top">
+                    
+                    <Button Content="📊 Dashboard" 
+                            Command="{Binding NavigateToDashboardCommand}"
+                            Margin="0,0,0,8">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AbaAtiva}" Value="Dashboard">
+                                        <Setter Property="Background" Value="{StaticResource TabActiveBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBlackBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    
+                    <Button Content="📦 Produtos" 
+                            Command="{Binding NavigateToProdutosCommand}"
+                            Margin="0,0,0,8">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AbaAtiva}" Value="Produtos">
+                                        <Setter Property="Background" Value="{StaticResource TabActiveBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBlackBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    
+                    <Button Content="👥 Clientes" 
+                            Command="{Binding NavigateToClientesCommand}"
+                            Margin="0,0,0,8">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AbaAtiva}" Value="Clientes">
+                                        <Setter Property="Background" Value="{StaticResource TabActiveBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBlackBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    
+                    <Button Content="💰 Vendas" 
+                            Command="{Binding NavigateToVendasCommand}"
+                            Margin="0,0,0,8">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AbaAtiva}" Value="Vendas">
+                                        <Setter Property="Background" Value="{StaticResource TabActiveBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBlackBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    
+                    <Button Content="💵 Financeiro" 
+                            Command="{Binding NavigateToFinanceiroCommand}"
+                            Margin="0,0,0,8">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AbaAtiva}" Value="Financeiro">
+                                        <Setter Property="Background" Value="{StaticResource TabActiveBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBlackBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    
+                    <Button Content="📈 Relatórios" 
+                            Command="{Binding NavigateToRelatoriosCommand}"
+                            Margin="0,0,0,8">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AbaAtiva}" Value="Relatorios">
+                                        <Setter Property="Background" Value="{StaticResource TabActiveBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBlackBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+                
+                <!-- Seletor de Tema na parte inferior -->
+                <Border Grid.Row="2" 
+                        Background="{StaticResource SecondaryBackgroundBrush}" 
+                        Padding="15"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Tema:" 
+                                   Foreground="{StaticResource ForegroundBrush}" 
+                                   FontSize="12"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Content="Claro" 
+                                    Style="{StaticResource ThemeButton}" 
+                                    Margin="2"
+                                    Command="{Binding AlterarTemaCommand}"
+                                    CommandParameter="Light"/>
+                            <Button Content="Escuro" 
+                                    Style="{StaticResource ThemeButton}" 
+                                    Margin="2"
+                                    Command="{Binding AlterarTemaCommand}"
+                                    CommandParameter="Dark"/>
+                            <Button Content="Karibes" 
+                                    Style="{StaticResource ThemeButton}" 
+                                    Margin="2"
+                                    Command="{Binding AlterarTemaCommand}"
+                                    CommandParameter="Karibes"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+        
+        <!-- ============================================ -->
+        <!-- ÁREA DE CONTEÚDO -->
+        <!-- ============================================ -->
+        <ContentControl Grid.Column="1" 
+                        Content="{Binding CurrentViewModel}"
+                        Margin="20">
+            <!-- DataTemplate será aplicado automaticamente baseado no tipo do ViewModel -->
+        </ContentControl>
+    </Grid>
+</Window>
+

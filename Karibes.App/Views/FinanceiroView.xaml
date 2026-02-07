@@ -1,0 +1,414 @@
+<UserControl x:Class="Karibes.App.Views.FinanceiroView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1200">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Cabeçalho -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource PanelBrush}" 
+                Padding="20,15"
+                Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="💰 Controle Financeiro" 
+                           FontSize="24" 
+                           FontWeight="Bold"
+                           Foreground="{StaticResource ForegroundBrush}"
+                           VerticalAlignment="Center"/>
+
+                <Button Grid.Column="1"
+                        Content="🔄 Atualizar" 
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding CarregarLancamentosCommand}"
+                        Padding="15,8"/>
+            </Grid>
+        </Border>
+
+        <!-- Conteúdo Principal -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <!-- Lista de Lançamentos -->
+                <ColumnDefinition Width="3*"/>
+                <!-- Painel Lateral -->
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ============================================ -->
+            <!-- LISTA DE LANÇAMENTOS -->
+            <!-- ============================================ -->
+            <Border Grid.Column="0" 
+                    Background="{StaticResource SecondaryBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    Margin="0,0,10,0"
+                    Padding="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Filtros -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                        <TextBlock Text="Filtros" 
+                                   FontSize="16" 
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Margin="0,0,0,10"/>
+
+                        <!-- Período -->
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <DatePicker Grid.Column="0"
+                                        SelectedDate="{Binding FiltroDataInicio}"
+                                        Style="{StaticResource ModernDatePicker}"/>
+                            <TextBlock Grid.Column="1" 
+                                       Text="até" 
+                                       VerticalAlignment="Center"
+                                       Foreground="{StaticResource ForegroundBrush}"
+                                       HorizontalAlignment="Center"/>
+                            <DatePicker Grid.Column="2"
+                                        SelectedDate="{Binding FiltroDataFim}"
+                                        Style="{StaticResource ModernDatePicker}"/>
+                        </Grid>
+
+                        <!-- Tipo, Status e Categoria -->
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0"
+                                      SelectedValue="{Binding FiltroTipo}"
+                                      SelectedValuePath="Content"
+                                      Style="{StaticResource ModernComboBox}"
+                                      Margin="0,0,5,0">
+                                <ComboBoxItem Content="Todos"/>
+                                <ComboBoxItem Content="Receita"/>
+                                <ComboBoxItem Content="Despesa"/>
+                            </ComboBox>
+                            <ComboBox Grid.Column="2"
+                                      SelectedValue="{Binding FiltroStatus}"
+                                      SelectedValuePath="Content"
+                                      Style="{StaticResource ModernComboBox}">
+                                <ComboBoxItem Content="Todos"/>
+                                <ComboBoxItem Content="Pendente"/>
+                                <ComboBoxItem Content="Pago"/>
+                                <ComboBoxItem Content="Cancelado"/>
+                            </ComboBox>
+                        </Grid>
+
+                        <!-- Categoria -->
+                        <TextBox Text="{Binding FiltroCategoria, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBox}"
+                                 Tag="Buscar por categoria..."/>
+                    </StackPanel>
+
+                    <!-- DataGrid de Lançamentos -->
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding LancamentosFiltrados}"
+                              SelectedItem="{Binding LancamentoSelecionado}"
+                              Style="{StaticResource ModernDataGrid}"
+                              AutoGenerateColumns="False"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="True"
+                              SelectionMode="Single"
+                              GridLinesVisibility="All"
+                              HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Data" 
+                                                Binding="{Binding DataLancamento, StringFormat=dd/MM/yyyy}" 
+                                                Width="90"/>
+                            <DataGridTextColumn Header="Tipo" 
+                                                Binding="{Binding Tipo}" 
+                                                Width="80">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Tipo}" Value="Receita">
+                                                <Setter Property="Foreground" Value="Green"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Tipo}" Value="Despesa">
+                                                <Setter Property="Foreground" Value="Red"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Categoria" 
+                                                Binding="{Binding Categoria}" 
+                                                Width="120"/>
+                            <DataGridTextColumn Header="Descrição" 
+                                                Binding="{Binding Descricao}" 
+                                                Width="*"/>
+                            <DataGridTextColumn Header="Valor" 
+                                                Binding="{Binding Valor, StringFormat=C2}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Tipo}" Value="Receita">
+                                                <Setter Property="Foreground" Value="Green"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Tipo}" Value="Despesa">
+                                                <Setter Property="Foreground" Value="Red"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Status" 
+                                                Binding="{Binding Status}" 
+                                                Width="80">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="Pago">
+                                                <Setter Property="Foreground" Value="Green"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="Pendente">
+                                                <Setter Property="Foreground" Value="Orange"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Pagamento" 
+                                                Binding="{Binding FormaPagamento}" 
+                                                Width="80"/>
+                            <DataGridTextColumn Header="Origem" 
+                                                Binding="{Binding Origem}" 
+                                                Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- ============================================ -->
+            <!-- PAINEL LATERAL -->
+            <!-- ============================================ -->
+            <Border Grid.Column="1" 
+                    Background="{StaticResource SecondaryBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    Padding="20">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Totalizadores -->
+                        <TextBlock Text="Totalizadores" 
+                                   FontSize="18" 
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Margin="0,0,0,15"/>
+
+                        <!-- Saldo do Caixa (Destaque) -->
+                        <Border Background="{StaticResource AccentBrush}"
+                                Padding="20"
+                                CornerRadius="8"
+                                Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Text="Saldo do Caixa" 
+                                           FontSize="14"
+                                           Foreground="{StaticResource PrimaryBlackBrush}"
+                                           Margin="0,0,0,5"/>
+                                <TextBlock Text="{Binding SaldoCaixa, StringFormat='R$ {}{0:N2}'}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource PrimaryBlackBrush}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Total Receitas -->
+                        <Border Background="{StaticResource BackgroundBrush}"
+                                Padding="15"
+                                CornerRadius="4"
+                                Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" 
+                                           Text="Total Receitas" 
+                                           Foreground="{StaticResource ForegroundBrush}"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="{Binding TotalReceitas, StringFormat='R$ {}{0:N2}'}"
+                                           Foreground="Green"
+                                           FontWeight="SemiBold"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Total Despesas -->
+                        <Border Background="{StaticResource BackgroundBrush}"
+                                Padding="15"
+                                CornerRadius="4"
+                                Margin="0,0,0,20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" 
+                                           Text="Total Despesas" 
+                                           Foreground="{StaticResource ForegroundBrush}"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="{Binding TotalDespesas, StringFormat='R$ {}{0:N2}'}"
+                                           Foreground="Red"
+                                           FontWeight="SemiBold"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Ações Rápidas -->
+                        <TextBlock Text="Ações Rápidas" 
+                                   FontSize="18" 
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Margin="0,0,0,15"/>
+
+                        <Button Content="✅ Marcar como Pago" 
+                                Style="{StaticResource PrimaryButton}"
+                                Command="{Binding AtualizarStatusCommand}"
+                                Padding="15,10"
+                                Margin="0,0,0,10"/>
+
+                        <!-- Cadastro de Lançamento -->
+                        <TextBlock Text="Novo Lançamento" 
+                                   FontSize="18" 
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Margin="0,20,0,15"/>
+
+                        <!-- Tipo de Lançamento -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <RadioButton Content="➕ Receita" 
+                                         IsChecked="{Binding IsCadastroReceita}"
+                                         Foreground="{StaticResource ForegroundBrush}"
+                                         Margin="0,0,15,0"/>
+                            <RadioButton Content="➖ Despesa" 
+                                         IsChecked="{Binding IsCadastroReceita, Converter={StaticResource InverseBooleanConverter}}"
+                                         Foreground="{StaticResource ForegroundBrush}"/>
+                        </StackPanel>
+
+                        <!-- Formulário -->
+                        <StackPanel>
+                            <!-- Categoria -->
+                            <TextBlock Text="Categoria *" 
+                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding CategoriaNova}"
+                                     Style="{StaticResource ModernTextBox}"
+                                     Margin="0,0,0,15"/>
+
+                            <!-- Descrição -->
+                            <TextBlock Text="Descrição *" 
+                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding DescricaoNova}"
+                                     Style="{StaticResource ModernTextBox}"
+                                     Margin="0,0,0,15"/>
+
+                            <!-- Valor -->
+                            <TextBlock Text="Valor *" 
+                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding ValorNovo}"
+                                     Style="{StaticResource ModernTextBox}"
+                                     Margin="0,0,0,15"/>
+
+                            <!-- Data de Vencimento -->
+                            <TextBlock Text="Data de Vencimento" 
+                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Margin="0,0,0,5"/>
+                            <DatePicker SelectedDate="{Binding DataVencimentoNova}"
+                                        Style="{StaticResource ModernDatePicker}"
+                                        Margin="0,0,0,15"/>
+
+                            <!-- Status -->
+                            <TextBlock Text="Status" 
+                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Margin="0,0,0,5"/>
+                            <ComboBox SelectedItem="{Binding StatusNovo}"
+                                      Style="{StaticResource ModernComboBox}"
+                                      Margin="0,0,0,15">
+                                <ComboBoxItem Content="Pendente"/>
+                                <ComboBoxItem Content="Pago"/>
+                            </ComboBox>
+
+                            <!-- Forma de Pagamento -->
+                            <TextBlock Text="Forma de Pagamento" 
+                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Margin="0,0,0,5"/>
+                            <ComboBox SelectedItem="{Binding FormaPagamentoNova}"
+                                      Style="{StaticResource ModernComboBox}"
+                                      Margin="0,0,0,15">
+                                <ComboBoxItem Content="Dinheiro"/>
+                                <ComboBoxItem Content="Cartão"/>
+                                <ComboBoxItem Content="Pix"/>
+                            </ComboBox>
+
+                            <!-- Observações -->
+                            <TextBlock Text="Observações" 
+                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding ObservacoesNova}"
+                                     Style="{StaticResource ModernTextBox}"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     MinHeight="60"
+                                     Margin="0,0,0,15"/>
+
+                            <!-- Botões -->
+                            <StackPanel Orientation="Horizontal" 
+                                        HorizontalAlignment="Right"
+                                        Margin="0,10,0,0">
+                                <Button Content="Limpar" 
+                                        Style="{StaticResource PrimaryButton}"
+                                        Command="{Binding LimparFormularioCommand}"
+                                        Padding="15,10"
+                                        Margin="0,0,10,0"/>
+                                <Button Content="Salvar Receita" 
+                                        Style="{StaticResource PrimaryButton}"
+                                        Command="{Binding RegistrarReceitaCommand}"
+                                        Padding="15,10"
+                                        Margin="0,0,10,0"
+                                        Visibility="{Binding IsCadastroReceita, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <Button Content="Salvar Despesa" 
+                                        Style="{StaticResource PrimaryButton}"
+                                        Command="{Binding RegistrarDespesaCommand}"
+                                        Padding="15,10"
+                                        Visibility="{Binding IsCadastroReceita, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
+

@@ -1,0 +1,2 @@
+cd Karibes.App
+dotnet run

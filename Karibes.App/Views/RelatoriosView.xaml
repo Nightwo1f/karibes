@@ -1,0 +1,265 @@
+<UserControl x:Class="Karibes.App.Views.RelatoriosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1200">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Cabeçalho -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource PanelBrush}" 
+                Padding="20,15"
+                Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="📊 Relatório Financeiro Consolidado" 
+                           FontSize="24" 
+                           FontWeight="Bold"
+                           Foreground="{StaticResource ForegroundBrush}"
+                           VerticalAlignment="Center"/>
+
+                <Button Grid.Column="1"
+                        Content="🔄 Gerar Relatório" 
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding GerarRelatorioCommand}"
+                        Padding="15,8"/>
+            </Grid>
+        </Border>
+
+        <!-- Conteúdo Principal -->
+        <ScrollViewer Grid.Row="1" 
+                      VerticalScrollBarVisibility="Auto"
+                      Padding="0,0,0,20">
+            <StackPanel>
+                <!-- Filtros -->
+                <Border Background="{StaticResource SecondaryBackgroundBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Data Início" 
+                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Margin="0,0,0,5"/>
+                            <DatePicker SelectedDate="{Binding DataInicio}"
+                                         Style="{StaticResource ModernDatePicker}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Data Fim" 
+                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Margin="0,0,0,5"/>
+                            <DatePicker SelectedDate="{Binding DataFim}"
+                                         Style="{StaticResource ModernDatePicker}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Painel de Valores -->
+                <Border Background="{StaticResource SecondaryBackgroundBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Título -->
+                        <TextBlock Grid.Row="0"
+                                   Text="Resumo Financeiro" 
+                                   FontSize="18" 
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Margin="0,0,0,20"/>
+
+                        <!-- Valores Principais -->
+                        <Grid Grid.Row="1" Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Total Vendas -->
+                            <Border Grid.Column="0"
+                                    Background="{StaticResource BackgroundBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="Total Vendas" 
+                                               FontSize="12"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding RelatorioAtual.TotalVendas, StringFormat='R$ {}{0:N2}'}" 
+                                               FontSize="20" 
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource AccentBrush}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Total Recebido -->
+                            <Border Grid.Column="2"
+                                    Background="{StaticResource BackgroundBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="Total Recebido" 
+                                               FontSize="12"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding RelatorioAtual.TotalRecebido, StringFormat='R$ {}{0:N2}'}" 
+                                               FontSize="20" 
+                                               FontWeight="Bold"
+                                               Foreground="Green"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Total a Receber -->
+                            <Border Grid.Column="4"
+                                    Background="{StaticResource BackgroundBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="Total a Receber" 
+                                               FontSize="12"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding RelatorioAtual.TotalReceber, StringFormat='R$ {}{0:N2}'}" 
+                                               FontSize="20" 
+                                               FontWeight="Bold"
+                                               Foreground="Orange"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Valores Secundários -->
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Total Despesas -->
+                            <Border Grid.Column="0"
+                                    Background="{StaticResource BackgroundBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="Total Despesas" 
+                                               FontSize="12"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding RelatorioAtual.TotalDespesas, StringFormat='R$ {}{0:N2}'}" 
+                                               FontSize="18" 
+                                               FontWeight="Bold"
+                                               Foreground="Red"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Crédito Concedido -->
+                            <Border Grid.Column="2"
+                                    Background="{StaticResource BackgroundBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="Crédito Concedido" 
+                                               FontSize="12"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding RelatorioAtual.TotalCreditoConcedido, StringFormat='R$ {}{0:N2}'}" 
+                                               FontSize="18" 
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource ForegroundBrush}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Crédito Pago -->
+                            <Border Grid.Column="4"
+                                    Background="{StaticResource BackgroundBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="Crédito Pago" 
+                                               FontSize="12"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding RelatorioAtual.TotalCreditoPago, StringFormat='R$ {}{0:N2}'}" 
+                                               FontSize="18" 
+                                               FontWeight="Bold"
+                                               Foreground="Green"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Saldo Final (Destaque) -->
+                            <Border Grid.Column="6"
+                                    Background="{StaticResource AccentBrush}"
+                                    BorderBrush="{StaticResource AccentBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="Saldo Final" 
+                                               FontSize="14"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource PrimaryBlackBrush}"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding RelatorioAtual.SaldoFinal, StringFormat='R$ {}{0:N2}'}" 
+                                               FontSize="24" 
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource PrimaryBlackBrush}"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
+
+
+
+
+

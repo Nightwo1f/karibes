@@ -1,0 +1,8 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- Estilos genéricos que não dependem de tema -->
+    <!-- Os estilos específicos (PrimaryButton, ModernTextBox, etc) estão definidos nos arquivos de tema -->
+    
+</ResourceDictionary>
+

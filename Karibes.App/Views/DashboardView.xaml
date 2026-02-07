@@ -1,0 +1,255 @@
+<UserControl x:Class="Karibes.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1200">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Cabeçalho -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource PanelBrush}" 
+                Padding="20,15"
+                Margin="0,0,0,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="📊 Dashboard - Visão Geral" 
+                           FontSize="24" 
+                           FontWeight="Bold"
+                           Foreground="{StaticResource ForegroundBrush}"
+                           VerticalAlignment="Center"/>
+
+                <Button Grid.Column="1"
+                        Content="🔄 Atualizar" 
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding CarregarDadosCommand}"
+                        Padding="15,8"/>
+            </Grid>
+        </Border>
+
+        <!-- Conteúdo Principal -->
+        <ScrollViewer Grid.Row="1" 
+                      VerticalScrollBarVisibility="Auto"
+                      Padding="0,0,0,20">
+            <StackPanel>
+                <!-- Cards de Indicadores -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Card: Vendas do Dia -->
+                    <Border Grid.Column="0"
+                            Background="{StaticResource SecondaryBackgroundBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="💰 Vendas do Dia" 
+                                       FontSize="14" 
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding VendasDia, StringFormat='R$ {}{0:N2}'}" 
+                                       FontSize="32" 
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       Margin="0,0,0,5"/>
+                            <TextBlock Text="{Binding QuantidadeVendasDia, StringFormat='{}{0} venda(s)'}" 
+                                       FontSize="12" 
+                                       Foreground="{StaticResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Card: Vendas do Mês -->
+                    <Border Grid.Column="2"
+                            Background="{StaticResource SecondaryBackgroundBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="📅 Vendas do Mês" 
+                                       FontSize="14" 
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding VendasMes, StringFormat='R$ {}{0:N2}'}" 
+                                       FontSize="32" 
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       Margin="0,0,0,5"/>
+                            <TextBlock Text="{Binding QuantidadeVendasMes, StringFormat='{}{0} venda(s)'}" 
+                                       FontSize="12" 
+                                       Foreground="{StaticResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Card: Lucro Estimado -->
+                    <Border Grid.Column="4"
+                            Background="{StaticResource SecondaryBackgroundBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="💵 Lucro Estimado (Mês)" 
+                                       FontSize="14" 
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding LucroEstimado, StringFormat='R$ {}{0:N2}'}" 
+                                       FontSize="32" 
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       Margin="0,0,0,5">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding LucroEstimado}" Value="{x:Static sys:Decimal.MinValue}">
+                                                <Setter Property="Foreground" Value="Red"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="Receita - Custos" 
+                                       FontSize="12" 
+                                       Foreground="{StaticResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Seção: Estoque Crítico -->
+                <Border Background="{StaticResource SecondaryBackgroundBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       Text="⚠️ Produtos com Estoque Crítico" 
+                                       FontSize="18" 
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource ForegroundBrush}"/>
+
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding ProdutosEstoqueCritico.Count, StringFormat='Total: {}{0}'}" 
+                                       FontSize="14" 
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <!-- Lista de Produtos -->
+                        <ItemsControl ItemsSource="{Binding ProdutosEstoqueCritico}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource BackgroundBrush}"
+                                            BorderBrush="{StaticResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="15"
+                                            Margin="0,0,0,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Ícone de Alerta -->
+                                            <TextBlock Grid.Column="0"
+                                                       Text="⚠️" 
+                                                       FontSize="24"
+                                                       Margin="0,0,15,0"
+                                                       VerticalAlignment="Center"/>
+
+                                            <!-- Informações do Produto -->
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="{Binding Nome}" 
+                                                           FontSize="16" 
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{StaticResource ForegroundBrush}"
+                                                           Margin="0,0,0,5"/>
+                                                <TextBlock Text="{Binding Codigo, StringFormat='Código: {}{0}'}" 
+                                                           FontSize="12" 
+                                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            </StackPanel>
+
+                                            <!-- Estoque Atual -->
+                                            <StackPanel Grid.Column="2" 
+                                                        Margin="20,0">
+                                                <TextBlock Text="Estoque Atual" 
+                                                           FontSize="11" 
+                                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                                           Margin="0,0,0,3"/>
+                                                <TextBlock Text="{Binding Estoque}" 
+                                                           FontSize="20" 
+                                                           FontWeight="Bold"
+                                                           Foreground="Red"
+                                                           HorizontalAlignment="Center"/>
+                                            </StackPanel>
+
+                                            <!-- Estoque Mínimo -->
+                                            <StackPanel Grid.Column="3" 
+                                                        Margin="20,0">
+                                                <TextBlock Text="Estoque Mín." 
+                                                           FontSize="11" 
+                                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                                           Margin="0,0,0,3"/>
+                                                <TextBlock Text="{Binding EstoqueMinimo}" 
+                                                           FontSize="20" 
+                                                           FontWeight="Bold"
+                                                           Foreground="{StaticResource AccentBrush}"
+                                                           HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Mensagem quando não há produtos críticos -->
+                        <TextBlock Text="✅ Nenhum produto com estoque crítico no momento!" 
+                                   FontSize="14" 
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,20,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ProdutosEstoqueCritico.Count}" Value="0">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
+

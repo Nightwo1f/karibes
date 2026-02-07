@@ -1,0 +1,321 @@
+<UserControl x:Class="Karibes.App.Views.ProdutosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1200">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Cabeçalho -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource PanelBrush}" 
+                Padding="20,15"
+                Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="📦 Gestão de Produtos" 
+                           FontSize="24" 
+                           FontWeight="Bold"
+                           Foreground="{StaticResource ForegroundBrush}"
+                           VerticalAlignment="Center"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="➕ Novo" 
+                            Style="{StaticResource PrimaryButton}"
+                            Command="{Binding NovoProdutoCommand}"
+                            Margin="5,0"/>
+                    <Button Content="🔄 Atualizar" 
+                            Style="{StaticResource PrimaryButton}"
+                            Command="{Binding CarregarProdutosCommand}"
+                            Margin="5,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Conteúdo Principal -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <!-- Lista de Produtos -->
+                <ColumnDefinition Width="2*"/>
+                <!-- Formulário -->
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ============================================ -->
+            <!-- LISTA DE PRODUTOS -->
+            <!-- ============================================ -->
+            <Border Grid.Column="0" 
+                    Background="{StaticResource SecondaryBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    Margin="0,0,10,0"
+                    Padding="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Filtros -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBox Text="{Binding FiltroTexto, UpdateSourceTrigger=PropertyChanged}"                                
+                                 Width="200"
+                                 Margin="0,0,10,0">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+                                    <Style.Triggers>
+                                        <Trigger Property="Text" Value="">
+                                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <CheckBox Content="Apenas ativos"
+                                  IsChecked="{Binding MostrarApenasAtivos}"
+                                  Foreground="{StaticResource ForegroundBrush}"
+                                  VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- DataGrid -->
+                    <DataGrid Grid.Row="2"
+                              ItemsSource="{Binding Produtos}"
+                              SelectedItem="{Binding ProdutoSelecionado}"
+                              Style="{StaticResource ModernDataGrid}"
+                              AutoGenerateColumns="False"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="True"
+                              SelectionMode="Single"
+                              GridLinesVisibility="All"
+                              HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Código" 
+                                                Binding="{Binding Codigo}" 
+                                                Width="80"/>
+                            <DataGridTextColumn Header="Nome" 
+                                                Binding="{Binding Nome}" 
+                                                Width="*"/>
+                            <DataGridTextColumn Header="Preço" 
+                                                Binding="{Binding Preco, StringFormat=C2}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Estoque" 
+                                                Binding="{Binding Estoque}" 
+                                                Width="70">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Est. Mín." 
+                                                Binding="{Binding EstoqueMinimo}" 
+                                                Width="70">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridCheckBoxColumn Header="Ativo" 
+                                                    Binding="{Binding Ativo}" 
+                                                    Width="60"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- ============================================ -->
+            <!-- FORMULÁRIO DE EDIÇÃO -->
+            <!-- ============================================ -->
+            <Border Grid.Column="1" 
+                    Background="{StaticResource SecondaryBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    Padding="20">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Dados do Produto" 
+                                   FontSize="18" 
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Margin="0,0,0,20"/>
+
+                        <!-- Código -->
+                        <TextBlock Text="Código *" 
+                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding ProdutoEditando.Codigo, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBox}"
+                                 Margin="0,0,0,15"/>
+
+                        <!-- Nome -->
+                        <TextBlock Text="Nome *" 
+                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding ProdutoEditando.Nome, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBox}"
+                                 Margin="0,0,0,15"/>
+
+                        <!-- Descrição -->
+                        <TextBlock Text="Descrição" 
+                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding ProdutoEditando.Descricao, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBox}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 MinHeight="60"
+                                 Margin="0,0,0,15"/>
+
+                        <!-- Preço e Custo -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Preço de Venda *" 
+                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding ProdutoEditando.Preco, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource ModernTextBox}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Preço de Custo *" 
+                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding ProdutoEditando.Custo, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource ModernTextBox}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Estoque e Estoque Mínimo -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Estoque Atual *" 
+                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding ProdutoEditando.Estoque, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource ModernTextBox}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Estoque Mínimo *" 
+                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding ProdutoEditando.EstoqueMinimo, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource ModernTextBox}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Unidade e Status -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Unidade" 
+                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Margin="0,0,0,5"/>
+                                <ComboBox SelectedValue="{Binding ProdutoEditando.Unidade}"
+                                          SelectedValuePath="Content"
+                                          Style="{StaticResource ModernComboBox}">
+                                    <ComboBoxItem Content="UN"/>
+                                    <ComboBoxItem Content="KG"/>
+                                    <ComboBoxItem Content="LT"/>
+                                    <ComboBoxItem Content="MT"/>
+                                    <ComboBoxItem Content="CX"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
+                                <CheckBox Content="Produto Ativo"
+                                          IsChecked="{Binding ProdutoEditando.Ativo}"
+                                          Foreground="{StaticResource ForegroundBrush}"
+                                          Margin="0,20,0,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Informações de Data -->
+                        <Border Background="{StaticResource BackgroundBrush}"
+                                Padding="10"
+                                CornerRadius="4"
+                                Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Text="Informações do Cadastro" 
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Margin="0,0,0,10"/>
+                                <TextBlock Text="{Binding ProdutoEditando.DataCadastro, StringFormat='Data de Cadastro: {}{0:dd/MM/yyyy HH:mm}'}"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Margin="0,0,0,5"/>
+                                <TextBlock Text="{Binding ProdutoEditando.DataUltimaAtualizacao, StringFormat='Última Atualização: {}{0:dd/MM/yyyy HH:mm}'}"
+                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Botões de Ação -->
+                        <StackPanel Orientation="Horizontal" 
+                                    HorizontalAlignment="Right"
+                                    Margin="0,20,0,0">
+                            <Button Content="💾 Salvar" 
+                                    Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding SalvarProdutoCommand}"
+                                    Padding="20,10"
+                                    Margin="0,0,10,0"/>
+                            <Button Content="🗑️ Excluir" 
+                                    Command="{Binding ExcluirProdutoCommand}"
+                                    Padding="20,10"
+                                    Margin="0,0,10,0">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                        <Setter Property="Background" Value="{StaticResource ErrorRedBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource WhiteBrush}"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource ErrorRedDarkBrush}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="❌ Cancelar" 
+                                    Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding CancelarEdicaoCommand}"
+                                    Padding="20,10"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
+

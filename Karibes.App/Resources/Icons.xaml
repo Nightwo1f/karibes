@@ -1,0 +1,17 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- Icon Paths - Placeholder para ícones -->
+    <PathGeometry x:Key="DashboardIcon" Figures="M 0,0 L 20,0 L 20,20 L 0,20 Z"/>
+    <PathGeometry x:Key="ProdutosIcon" Figures="M 0,0 L 20,0 L 20,20 L 0,20 Z"/>
+    <PathGeometry x:Key="ClientesIcon" Figures="M 0,0 L 20,0 L 20,20 L 0,20 Z"/>
+    <PathGeometry x:Key="VendasIcon" Figures="M 0,0 L 20,0 L 20,20 L 0,20 Z"/>
+    <PathGeometry x:Key="FinanceiroIcon" Figures="M 0,0 L 20,0 L 20,20 L 0,20 Z"/>
+    <PathGeometry x:Key="RelatoriosIcon" Figures="M 0,0 L 20,0 L 20,20 L 0,20 Z"/>
+    
+</ResourceDictionary>
+
+
+
+
+
