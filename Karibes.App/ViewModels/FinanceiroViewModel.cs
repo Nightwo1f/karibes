@@ -2,6 +2,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using Karibes.App.Data.Repositories;
 using Karibes.App.Models;
 using Karibes.App.Services;
 using Karibes.App.Utils;
@@ -13,8 +15,8 @@ namespace Karibes.App.ViewModels
     /// </summary>
     public class FinanceiroViewModel : BaseViewModel
     {
-        private readonly FinanceiroService _financeiroService;
-        private readonly ExcelService _excelService;
+        private readonly IFinanceiroRepository _financeiroRepository;
+        private readonly CalculoFinanceiroService _calculoFinanceiro;
         private readonly DashboardViewModel _dashboard;
 
         // Listagem
@@ -59,7 +61,11 @@ namespace Karibes.App.ViewModels
         public LancamentoFinanceiro? LancamentoSelecionado
         {
             get => _lancamentoSelecionado;
-            set => SetProperty(ref _lancamentoSelecionado, value);
+            set
+            {
+                if (SetProperty(ref _lancamentoSelecionado, value))
+                    CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         public DateTime FiltroDataInicio
@@ -172,20 +178,36 @@ namespace Karibes.App.ViewModels
         public decimal TotalReceitas
         {
             get => _totalReceitas;
-            set => SetProperty(ref _totalReceitas, value);
+            set
+            {
+                if (SetProperty(ref _totalReceitas, value))
+                    OnPropertyChanged(nameof(TotalReceitasTexto));
+            }
         }
 
         public decimal TotalDespesas
         {
             get => _totalDespesas;
-            set => SetProperty(ref _totalDespesas, value);
+            set
+            {
+                if (SetProperty(ref _totalDespesas, value))
+                    OnPropertyChanged(nameof(TotalDespesasTexto));
+            }
         }
 
         public decimal SaldoCaixa
         {
             get => _saldoCaixa;
-            set => SetProperty(ref _saldoCaixa, value);
+            set
+            {
+                if (SetProperty(ref _saldoCaixa, value))
+                    OnPropertyChanged(nameof(SaldoCaixaTexto));
+            }
         }
+
+        public string TotalReceitasTexto => FormatarMoeda(TotalReceitas);
+        public string TotalDespesasTexto => FormatarMoeda(TotalDespesas);
+        public string SaldoCaixaTexto => FormatarMoeda(SaldoCaixa);
 
         // Commands
         public RelayCommand CarregarLancamentosCommand { get; }
@@ -196,11 +218,13 @@ namespace Karibes.App.ViewModels
 
         private bool _isInitialized = false;
 
+        private static string FormatarMoeda(decimal valor) => $"R$ {valor:N2}";
+
         public FinanceiroViewModel(DashboardViewModel dashboard)
         {
             _dashboard = dashboard;
-            _excelService = new ExcelService();
-            _financeiroService = new FinanceiroService(_excelService);
+            _financeiroRepository = RepositoryFactory.CriarFinanceiroRepository();
+            _calculoFinanceiro = new CalculoFinanceiroService();
 
             Lancamentos = new ObservableCollection<LancamentoFinanceiro>();
             LancamentosFiltrados = new ObservableCollection<LancamentoFinanceiro>();
@@ -226,7 +250,7 @@ namespace Karibes.App.ViewModels
                 // Carrega lançamentos do último ano para ter dados suficientes
                 var inicio = DateTime.Now.AddYears(-1);
                 var fim = DateTime.Now.AddDays(1);
-                var lancamentos = _financeiroService.ObterLancamentos(inicio, fim);
+                var lancamentos = _financeiroRepository.ObterLancamentos(inicio, fim);
 
                 Lancamentos.Clear();
                 foreach (var lancamento in lancamentos.OrderByDescending(l => l.DataLancamento))
@@ -321,24 +345,10 @@ namespace Karibes.App.ViewModels
                     return;
                 }
 
-                TotalReceitas = Lancamentos
-                    .Where(l => l.Tipo == Constants.TipoReceita)
-                    .Sum(l => l.Valor);
-
-                TotalDespesas = Lancamentos
-                    .Where(l => l.Tipo == Constants.TipoDespesa)
-                    .Sum(l => l.Valor);
-
-                // Saldo do caixa (apenas lançamentos pagos)
-                var receitasPagas = Lancamentos
-                    .Where(l => l.Tipo == Constants.TipoReceita && l.Status == Constants.StatusPago)
-                    .Sum(l => l.Valor);
-
-                var despesasPagas = Lancamentos
-                    .Where(l => l.Tipo == Constants.TipoDespesa && l.Status == Constants.StatusPago)
-                    .Sum(l => l.Valor);
-
-                SaldoCaixa = receitasPagas - despesasPagas;
+                var (totalReceitas, totalDespesas, saldoCaixa) = _calculoFinanceiro.CalcularTotalizadoresLancamentos(LancamentosFiltrados);
+                TotalReceitas = totalReceitas;
+                TotalDespesas = totalDespesas;
+                SaldoCaixa = saldoCaixa;
             }
             catch (Exception ex)
             {
@@ -374,7 +384,7 @@ namespace Karibes.App.ViewModels
                     Observacoes = ObservacoesNova
                 };
 
-                _financeiroService.RegistrarReceita(lancamento);
+                _financeiroRepository.RegistrarReceita(lancamento);
                 _dashboard.AtualizarDashboard();
                 MessageBox.Show("Receita registrada com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
                 
@@ -411,7 +421,7 @@ namespace Karibes.App.ViewModels
                     Observacoes = ObservacoesNova
                 };
 
-                _financeiroService.RegistrarDespesa(lancamento);
+                _financeiroRepository.RegistrarDespesa(lancamento);
                 _dashboard.AtualizarDashboard();
                 MessageBox.Show("Despesa registrada com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
                 
@@ -447,7 +457,7 @@ namespace Karibes.App.ViewModels
             {
                 try
                 {
-                    _financeiroService.AtualizarStatus(LancamentoSelecionado.Id, Constants.StatusPago);
+                    _financeiroRepository.AtualizarStatus(LancamentoSelecionado.Id, Constants.StatusPago);
                     _dashboard.AtualizarDashboard();
                     MessageBox.Show("Status atualizado com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
                     CarregarLancamentos();
@@ -501,4 +511,3 @@ namespace Karibes.App.ViewModels
         }
     }
 }
-

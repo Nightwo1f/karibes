@@ -15,7 +15,9 @@ namespace Karibes.App.Services
         private readonly ExcelService _excelService;
         private readonly CreditoService _creditoService;
         private readonly ProdutoService _produtoService;
+        private readonly ClienteService _clienteService;
         private readonly FinanceiroService _financeiroService;
+        private readonly CalculoFinanceiroService _calculoFinanceiro;
         private const string VendasSheetName = "Vendas";
         private const string ItensVendaSheetName = "ItensVenda";
 
@@ -24,7 +26,9 @@ namespace Karibes.App.Services
             _excelService = new ExcelService();
             _creditoService = new CreditoService();
             _produtoService = new ProdutoService();
+            _clienteService = new ClienteService();
             _financeiroService = new FinanceiroService(_excelService);
+            _calculoFinanceiro = new CalculoFinanceiroService();
             InicializarArquivo();
         }
 
@@ -437,6 +441,28 @@ namespace Karibes.App.Services
         }
 
         /// <summary>
+        /// Obtém o custo total das vendas finalizadas em um período (para lucro estimado).
+        /// </summary>
+        public decimal ObterCustoTotalVendasPeriodo(DateTime inicio, DateTime fim)
+        {
+            var vendas = ObterTodas()
+                .Where(v => v.Status == "Finalizada" && v.DataVenda >= inicio && v.DataVenda <= fim)
+                .ToList();
+            decimal custo = 0;
+            foreach (var venda in vendas)
+            {
+                var itens = venda.Itens ?? ObterItensVenda(venda.Id);
+                foreach (var item in itens)
+                {
+                    var produto = _produtoService.ObterPorId(item.ProdutoId);
+                    if (produto != null)
+                        custo += produto.Custo * item.Quantidade;
+                }
+            }
+            return custo;
+        }
+
+        /// <summary>
         /// Obtém uma venda por número de venda
         /// </summary>
         public Venda? ObterPorNumeroVenda(string numeroVenda)
@@ -602,8 +628,7 @@ namespace Karibes.App.Services
                     _produtoService.AtualizarEstoque(item.ProdutoId, novoEstoque);
                 }
 
-                // Calcular valor proporcional
-                decimal valorProporcional = (item.ValorTotal / item.Quantidade) * quantidadeDevolver;
+                decimal valorProporcional = _calculoFinanceiro.CalcularValorProporcionalDevolucao(item, quantidadeDevolver);
                 valorDevolvido += valorProporcional;
             }
 
@@ -671,7 +696,7 @@ namespace Karibes.App.Services
                 if (item != null)
                 {
                     int quantidade = Math.Min(itemDevolver.Value, item.Quantidade);
-                    decimal valorProporcional = (item.ValorTotal / item.Quantidade) * quantidade;
+                    decimal valorProporcional = _calculoFinanceiro.CalcularValorProporcionalDevolucao(item, quantidade);
                     valorDevolvido += valorProporcional;
 
                     // Retornar ao estoque
@@ -684,8 +709,7 @@ namespace Karibes.App.Services
                 }
             }
 
-            // Calcular valor dos novos itens
-            decimal valorNovos = itensNovos.Sum(i => i.ValorTotal);
+            decimal valorNovos = _calculoFinanceiro.CalcularSubtotalItens(itensNovos);
 
             // Processar diferença de valores
             decimal diferenca = valorNovos - valorDevolvido;
@@ -781,11 +805,14 @@ namespace Karibes.App.Services
         {
             try
             {
+                var clienteId = worksheet.Cells[row, 3].GetValue<int?>() ?? 0;
+
                 return new Venda
                 {
                     Id = worksheet.Cells[row, 1].GetValue<int>(),
                     NumeroVenda = worksheet.Cells[row, 2].GetValue<string>() ?? string.Empty,
-                    ClienteId = worksheet.Cells[row, 3].GetValue<int?>() ?? 0,
+                    ClienteId = clienteId,
+                    Cliente = clienteId > 0 ? _clienteService.ObterPorId(clienteId) : null,
                     DataVenda = worksheet.Cells[row, 4].GetValue<DateTime>(),
                     ValorSubtotal = worksheet.Cells[row, 5].GetValue<decimal>(),
                     Desconto = worksheet.Cells[row, 6].GetValue<decimal>(),
@@ -905,4 +932,3 @@ namespace Karibes.App.Services
         }
     }
 }
-

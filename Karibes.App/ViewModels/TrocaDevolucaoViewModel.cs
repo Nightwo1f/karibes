@@ -2,6 +2,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using Karibes.App.Data.Repositories;
 using Karibes.App.Models;
 using Karibes.App.Services;
 using Karibes.App.Utils;
@@ -13,20 +15,21 @@ namespace Karibes.App.ViewModels
     /// </summary>
     public class TrocaDevolucaoViewModel : BaseViewModel
     {
-        private readonly VendaService _vendaService;
-        private readonly ProdutoService _produtoService;
-        private readonly ClienteService _clienteService;
+        private readonly IVendaRepository _vendaRepository;
+        private readonly IProdutoRepository _produtoRepository;
+        private readonly IClienteRepository _clienteRepository;
+        private readonly CalculoFinanceiroService _calculoFinanceiro;
 
         // Busca de venda
         private string _numeroVendaBusca = string.Empty;
         private Venda? _vendaSelecionada;
 
         // Itens para devolução
-        private ObservableCollection<ItemDevolucaoViewModel> _itensDevolucao;
+        private ObservableCollection<ItemDevolucaoViewModel> _itensDevolucao = new();
         private decimal _valorTotalDevolucao;
 
         // Itens para troca (novos)
-        private ObservableCollection<ItemVenda> _itensNovos;
+        private ObservableCollection<ItemVenda> _itensNovos = new();
         private Produto? _produtoSelecionado;
         private int _quantidadeAdicionar = 1;
         private decimal _valorTotalNovos;
@@ -37,7 +40,7 @@ namespace Karibes.App.ViewModels
         private bool _isModoDevolucao = true; // true = Devolução, false = Troca
 
         // Produtos disponíveis
-        private ObservableCollection<Produto> _produtosDisponiveis;
+        private ObservableCollection<Produto> _produtosDisponiveis = new();
         private string _buscaProduto = string.Empty;
 
         public string NumeroVendaBusca
@@ -52,6 +55,7 @@ namespace Karibes.App.ViewModels
             set
             {
                 SetProperty(ref _vendaSelecionada, value);
+                CommandManager.InvalidateRequerySuggested();
                 if (value != null)
                 {
                     CarregarItensDevolucao();
@@ -68,7 +72,11 @@ namespace Karibes.App.ViewModels
         public decimal ValorTotalDevolucao
         {
             get => _valorTotalDevolucao;
-            set => SetProperty(ref _valorTotalDevolucao, value);
+            set
+            {
+                if (SetProperty(ref _valorTotalDevolucao, value))
+                    OnPropertyChanged(nameof(ValorTotalDevolucaoTexto));
+            }
         }
 
         public ObservableCollection<ItemVenda> ItensNovos
@@ -92,14 +100,26 @@ namespace Karibes.App.ViewModels
         public decimal ValorTotalNovos
         {
             get => _valorTotalNovos;
-            set => SetProperty(ref _valorTotalNovos, value);
+            set
+            {
+                if (SetProperty(ref _valorTotalNovos, value))
+                    OnPropertyChanged(nameof(ValorTotalNovosTexto));
+            }
         }
 
         public decimal DiferencaValor
         {
             get => _diferencaValor;
-            set => SetProperty(ref _diferencaValor, value);
+            set
+            {
+                if (SetProperty(ref _diferencaValor, value))
+                    OnPropertyChanged(nameof(DiferencaValorTexto));
+            }
         }
+
+        public string ValorTotalDevolucaoTexto => ValorTotalDevolucao.ToString("C2");
+        public string ValorTotalNovosTexto => ValorTotalNovos.ToString("C2");
+        public string DiferencaValorTexto => DiferencaValor.ToString("C2");
 
         public string Observacao
         {
@@ -147,9 +167,10 @@ namespace Karibes.App.ViewModels
 
         public TrocaDevolucaoViewModel()
         {
-            _vendaService = new VendaService();
-            _produtoService = new ProdutoService();
-            _clienteService = new ClienteService();
+            _vendaRepository = RepositoryFactory.CriarVendaRepository();
+            _produtoRepository = RepositoryFactory.CriarProdutoRepository();
+            _clienteRepository = RepositoryFactory.CriarClienteRepository();
+            _calculoFinanceiro = new CalculoFinanceiroService();
 
             ItensDevolucao = new ObservableCollection<ItemDevolucaoViewModel>();
             ItensNovos = new ObservableCollection<ItemVenda>();
@@ -178,7 +199,7 @@ namespace Karibes.App.ViewModels
 
             try
             {
-                var venda = _vendaService.ObterPorNumeroVenda(NumeroVendaBusca.Trim());
+                var venda = _vendaRepository.ObterPorNumeroVenda(NumeroVendaBusca.Trim());
                 if (venda == null)
                 {
                     MessageBox.Show("Venda não encontrada.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -188,7 +209,7 @@ namespace Karibes.App.ViewModels
                 // Carregar cliente se necessário
                 if (venda.ClienteId > 0 && venda.Cliente == null)
                 {
-                    venda.Cliente = _clienteService.ObterPorId(venda.ClienteId);
+                    venda.Cliente = _clienteRepository.ObterPorId(venda.ClienteId);
                 }
 
                 VendaSelecionada = venda;
@@ -211,7 +232,7 @@ namespace Karibes.App.ViewModels
             {
                 if (item.Produto == null)
                 {
-                    item.Produto = _produtoService.ObterPorId(item.ProdutoId);
+                    item.Produto = _produtoRepository.ObterPorId(item.ProdutoId);
                 }
 
                 var itemDevolucao = new ItemDevolucaoViewModel
@@ -306,14 +327,16 @@ namespace Karibes.App.ViewModels
         {
             ValorTotalDevolucao = ItensDevolucao
                 .Where(i => i.QuantidadeDevolver > 0)
-                .Sum(i => (i.ItemVenda.ValorTotal / i.ItemVenda.Quantidade) * i.QuantidadeDevolver);
+                .Sum(i => _calculoFinanceiro.CalcularValorProporcionalDevolucao(i.ItemVenda, i.QuantidadeDevolver));
 
-            ValorTotalNovos = ItensNovos.Sum(i => i.ValorTotal);
+            ValorTotalNovos = _calculoFinanceiro.CalcularSubtotalItens(ItensNovos);
 
             DiferencaValor = ValorTotalNovos - ValorTotalDevolucao;
 
             OnPropertyChanged(nameof(ValorTotalDevolucao));
             OnPropertyChanged(nameof(ValorTotalNovos));
+            OnPropertyChanged(nameof(DiferencaValor));
+            CommandManager.InvalidateRequerySuggested();
         }
 
         /// <summary>
@@ -343,7 +366,7 @@ namespace Karibes.App.ViewModels
             {
                 try
                 {
-                    _vendaService.DevolverVenda(VendaSelecionada.Id, itensDevolver, Observacao);
+                    _vendaRepository.DevolverVenda(VendaSelecionada.Id, itensDevolver, Observacao);
                     MessageBox.Show("Devolução realizada com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
                     Limpar();
                 }
@@ -388,7 +411,7 @@ namespace Karibes.App.ViewModels
             {
                 try
                 {
-                    _vendaService.TrocarVenda(VendaSelecionada.Id, itensDevolver, ItensNovos.ToList(), Observacao);
+                    _vendaRepository.TrocarVenda(VendaSelecionada.Id, itensDevolver, ItensNovos.ToList(), Observacao);
                     MessageBox.Show("Troca realizada com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
                     Limpar();
                 }
@@ -423,7 +446,7 @@ namespace Karibes.App.ViewModels
         {
             try
             {
-                var produtos = _produtoService.ObterTodos().Where(p => p.Ativo).ToList();
+                var produtos = _produtoRepository.ObterTodos().Where(p => p.Ativo).ToList();
                 ProdutosDisponiveis.Clear();
                 foreach (var produto in produtos)
                 {
@@ -447,10 +470,11 @@ namespace Karibes.App.ViewModels
                 return;
             }
 
-            var produtos = _produtoService.ObterTodos()
+            var produtos = _produtoRepository.ObterTodos()
                 .Where(p => p.Ativo && 
                     (p.Nome.ToLower().Contains(BuscaProduto.ToLower()) ||
-                     p.Codigo.ToLower().Contains(BuscaProduto.ToLower())))
+                     p.Codigo.ToLower().Contains(BuscaProduto.ToLower()) ||
+                     (!string.IsNullOrWhiteSpace(p.Categoria) && p.Categoria.ToLower().Contains(BuscaProduto.ToLower()))))
                 .ToList();
 
             ProdutosDisponiveis.Clear();
@@ -466,7 +490,7 @@ namespace Karibes.App.ViewModels
     /// </summary>
     public class ItemDevolucaoViewModel : BaseViewModel
     {
-        private ItemVenda _itemVenda;
+        private ItemVenda _itemVenda = new();
         private int _quantidadeOriginal;
         private int _quantidadeDevolver;
         private TrocaDevolucaoViewModel? _viewModelPrincipal;
@@ -509,4 +533,3 @@ namespace Karibes.App.ViewModels
             : 0;
     }
 }
-

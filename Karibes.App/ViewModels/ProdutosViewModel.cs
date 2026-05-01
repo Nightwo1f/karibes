@@ -2,6 +2,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using Karibes.App.Data.Repositories;
 using Karibes.App.Models;
 using Karibes.App.Services;
 using Karibes.App.Utils;
@@ -13,7 +15,8 @@ namespace Karibes.App.ViewModels
     /// </summary>
     public class ProdutosViewModel : BaseViewModel
     {
-        private readonly ProdutoService _produtoService;
+        private readonly IProdutoRepository _produtoRepository;
+        private readonly PdfExportService _pdfExportService = new();
         private ObservableCollection<Produto> _produtos = new();
         private Produto? _produtoSelecionado;
         private Produto? _produtoEditando;
@@ -33,6 +36,7 @@ namespace Karibes.App.ViewModels
             set
             {
                 SetProperty(ref _produtoSelecionado, value);
+                CommandManager.InvalidateRequerySuggested();
                 if (value != null)
                 {
                     ProdutoEditando = new Produto
@@ -41,6 +45,7 @@ namespace Karibes.App.ViewModels
                         Codigo = value.Codigo,
                         Nome = value.Nome,
                         Descricao = value.Descricao,
+                        Categoria = value.Categoria,
                         Preco = value.Preco,
                         Custo = value.Custo,
                         Estoque = value.Estoque,
@@ -90,11 +95,12 @@ namespace Karibes.App.ViewModels
         public RelayCommand SalvarProdutoCommand { get; }
         public RelayCommand ExcluirProdutoCommand { get; }
         public RelayCommand CancelarEdicaoCommand { get; }
+        public RelayCommand ExportarPdfCommand { get; }
 
         public ProdutosViewModel(DashboardViewModel dashboard)
         {
             _dashboard = dashboard;
-            _produtoService = new ProdutoService();
+            _produtoRepository = RepositoryFactory.CriarProdutoRepository();
             Produtos = new ObservableCollection<Produto>();
 
             CarregarProdutosCommand = new RelayCommand(_ => CarregarProdutos());
@@ -102,6 +108,7 @@ namespace Karibes.App.ViewModels
             SalvarProdutoCommand = new RelayCommand(_ => SalvarProduto(), _ => ProdutoEditando != null);
             ExcluirProdutoCommand = new RelayCommand(_ => ExcluirProduto(), _ => ProdutoSelecionado != null && ProdutoSelecionado.Ativo);
             CancelarEdicaoCommand = new RelayCommand(_ => CancelarEdicao());
+            ExportarPdfCommand = new RelayCommand(_ => ExportarPdf());
 
             CarregarProdutos();
         }
@@ -113,7 +120,7 @@ namespace Karibes.App.ViewModels
         {
             try
             {
-                var produtos = _produtoService.ObterTodos();
+                var produtos = _produtoRepository.ObterTodos();
                 Produtos.Clear();
                 foreach (var produto in produtos)
                 {
@@ -138,6 +145,7 @@ namespace Karibes.App.ViewModels
                 Codigo = string.Empty,
                 Nome = string.Empty,
                 Descricao = string.Empty,
+                Categoria = string.Empty,
                 Preco = 0,
                 Custo = 0,
                 Estoque = 0,
@@ -199,13 +207,13 @@ namespace Karibes.App.ViewModels
                 if (ProdutoEditando.Id == 0)
                 {
                     // Novo produto
-                    _produtoService.Criar(ProdutoEditando);
+                    _produtoRepository.Criar(ProdutoEditando);
                     MessageBox.Show("Produto criado com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
                     // Atualizar produto existente
-                    _produtoService.Atualizar(ProdutoEditando);
+                    _produtoRepository.Atualizar(ProdutoEditando);
                     MessageBox.Show("Produto atualizado com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
@@ -240,7 +248,7 @@ namespace Karibes.App.ViewModels
             {
                 try
                 {
-                    _produtoService.Excluir(ProdutoSelecionado.Id);
+                    _produtoRepository.Excluir(ProdutoSelecionado.Id);
                     MessageBox.Show("Produto excluído com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
                     CarregarProdutos();
                     ProdutoSelecionado = null;
@@ -268,7 +276,7 @@ namespace Karibes.App.ViewModels
         {
             // Esta implementação é simplificada - em produção, você pode usar CollectionViewSource
             // Por enquanto, vamos recarregar e filtrar
-            var todosProdutos = _produtoService.ObterTodos();
+            var todosProdutos = _produtoRepository.ObterTodos();
 
             var filtrados = todosProdutos.AsQueryable();
 
@@ -283,6 +291,7 @@ namespace Karibes.App.ViewModels
                 filtrados = filtrados.Where(p =>
                     p.Nome.ToLower().Contains(filtro) ||
                     p.Codigo.ToLower().Contains(filtro) ||
+                    (!string.IsNullOrWhiteSpace(p.Categoria) && p.Categoria.ToLower().Contains(filtro)) ||
                     (p.Descricao != null && p.Descricao.ToLower().Contains(filtro)));
             }
 
@@ -292,7 +301,20 @@ namespace Karibes.App.ViewModels
                 Produtos.Add(produto);
             }
         }
+
+        private void ExportarPdf()
+        {
+            try
+            {
+                var pasta = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var caminho = System.IO.Path.Combine(pasta, $"Produtos_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+                _pdfExportService.ExportarProdutos(Produtos, caminho);
+                MessageBox.Show($"PDF exportado em:\n{caminho}", "Exportação", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao exportar PDF: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }
-
-

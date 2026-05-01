@@ -1,0 +1,338 @@
+<UserControl x:Class="Karibes.App.Views.RelatoriosGerenciaisView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:Karibes.App.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <converters:ValueToBarWidthConverter x:Key="ValueToBarWidthConverter"/>
+        <!-- Cores discretas para cards (sem alterar tema global) -->
+        <SolidColorBrush x:Key="CardVerde" Color="#2E7D32"/>
+        <SolidColorBrush x:Key="CardVermelho" Color="#B71C1C"/>
+        <SolidColorBrush x:Key="BarraVerde" Color="#2E7D32"/>
+        <SolidColorBrush x:Key="BarraVermelho" Color="#B71C1C"/>
+        <SolidColorBrush x:Key="BadgeVerdeBg" Color="#1B5E20"/>
+        <SolidColorBrush x:Key="BadgeAlertaBg" Color="#E65100"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Cabeçalho: apenas Atualizar em amarelo; Exportar em estilo secundário -->
+        <Border Grid.Row="0" 
+                Background="{DynamicResource PanelBrush}" 
+                Padding="20,18"
+                Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
+	                    <ColumnDefinition Width="Auto"/>
+	                    <ColumnDefinition Width="10"/>
+	                    <ColumnDefinition Width="Auto"/>
+	                    <ColumnDefinition Width="10"/>
+	                    <ColumnDefinition Width="Auto"/>
+	                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="📈 Relatórios Gerenciais" 
+                           FontSize="26" 
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource ForegroundBrush}"
+                           VerticalAlignment="Center"/>
+                <Button Grid.Column="1"
+                        Content="🔄 Atualizar"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding AtualizarRelatorioCommand}"
+                        Padding="18,10"/>
+                <Button Grid.Column="3"
+                        Content="📥 Exportar Relatório"
+                        Command="{Binding ExportarRelatorioCommand}"
+                        Padding="18,10"
+                        Background="{DynamicResource SecondaryBackgroundBrush}"
+                        Foreground="{DynamicResource ForegroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        Cursor="Hand"/>
+                <Button Grid.Column="5"
+                        Content="📥 Exportar Fluxo"
+                        Command="{Binding ExportarFluxoCaixaCommand}"
+                        Padding="18,10"
+                        Background="{DynamicResource SecondaryBackgroundBrush}"
+                        Foreground="{DynamicResource ForegroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        Cursor="Hand"/>
+                <Button Grid.Column="7"
+                        Content="Exportar PDF"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding ExportarPdfCommand}"
+                        Padding="18,10"/>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,0,24">
+            <StackPanel>
+                <!-- Filtros de período -->
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="24"
+                        Margin="0,0,0,28">
+                    <StackPanel>
+                        <TextBlock Text="Período" FontSize="14" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Data Início" Foreground="{DynamicResource ForegroundBrush}" FontSize="13" Margin="0,0,0,6"/>
+                                <DatePicker SelectedDate="{Binding DataInicio}" Style="{StaticResource ModernDatePicker}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Data Fim" Foreground="{DynamicResource ForegroundBrush}" FontSize="13" Margin="0,0,0,6"/>
+                                <DatePicker SelectedDate="{Binding DataFim}" Style="{StaticResource ModernDatePicker}"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Indicador de auditoria: badge verde (ok) ou amarelo/vermelho (atenção) -->
+                <Border Margin="0,0,0,28"
+                        Padding="14,10"
+                        CornerRadius="6"
+                        HorizontalAlignment="Left"
+                        Background="{StaticResource BadgeVerdeBg}"
+                        BorderBrush="#4CAF50"
+                        BorderThickness="1">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="{StaticResource BadgeVerdeBg}"/>
+                            <Setter Property="BorderBrush" Value="#4CAF50"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAuditoriaOk}" Value="False">
+                                    <Setter Property="Background" Value="{StaticResource BadgeAlertaBg}"/>
+                                    <Setter Property="BorderBrush" Value="#FF9800"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel>
+                        <TextBlock Text="✓ Financeiro consistente" FontSize="13" Foreground="{DynamicResource WhiteBrush}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsAuditoriaOk}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="⚠ Atenção: divergência detectada" FontSize="13" Foreground="{DynamicResource WhiteBrush}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsAuditoriaOk}" Value="False">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- Cards de resumo financeiro: layout horizontal, sombra, cores por tipo -->
+                <TextBlock Text="Resumo Financeiro" FontSize="20" FontWeight="Bold"
+                           Foreground="{DynamicResource ForegroundBrush}" Margin="0,0,0,16"/>
+                <Grid Margin="0,0,0,28">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Total Vendas (neutro) -->
+                    <Border Grid.Column="0" CornerRadius="10" Padding="20" Background="{DynamicResource BackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.25" Color="Black"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Total Vendas" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding TotalVendasTexto}"
+                                       FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Total Recebido (verde discreto) -->
+                    <Border Grid.Column="2" CornerRadius="10" Padding="20" Background="{DynamicResource BackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.25" Color="Black"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Total Recebido" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding TotalRecebidoTexto}"
+                                       FontSize="22" FontWeight="Bold" Foreground="{StaticResource CardVerde}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Total Despesas (vermelho discreto) -->
+                    <Border Grid.Column="4" CornerRadius="10" Padding="20" Background="{DynamicResource BackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.25" Color="Black"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Total Despesas" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding TotalDespesasTexto}"
+                                       FontSize="22" FontWeight="Bold" Foreground="{StaticResource CardVermelho}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Saldo Final (destaque amarelo Karibes) -->
+                    <Border Grid.Column="6" CornerRadius="10" Padding="20" Background="{DynamicResource AccentBrush}"
+                            BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.3" Color="Black"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Saldo Final" FontSize="12" Foreground="{DynamicResource PrimaryBlackBrush}" Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding SaldoFinalTexto}"
+                                       FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryBlackBrush}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Vendas no período: barra com altura maior -->
+                <TextBlock Text="Vendas no período" FontSize="18" FontWeight="Bold"
+                           Foreground="{DynamicResource ForegroundBrush}" Margin="0,0,0,14"/>
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="24"
+                        Margin="0,0,0,28">
+                    <Grid Height="56" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="320"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                                   Fill="{DynamicResource AccentBrush}" RadiusX="4" RadiusY="4">
+                            <Rectangle.Width>
+                                <Binding Path="RelatorioAtual.TotalVendas" Converter="{StaticResource ValueToBarWidthConverter}">
+                                    <Binding.ConverterParameter>100000</Binding.ConverterParameter>
+                                </Binding>
+                            </Rectangle.Width>
+                        </Rectangle>
+                        <TextBlock Grid.Column="2" Text="{Binding TotalVendasTexto}"
+                                   Foreground="{DynamicResource ForegroundBrush}" VerticalAlignment="Center" FontSize="15" FontWeight="SemiBold"/>
+                    </Grid>
+                </Border>
+
+                <!-- Fluxo de caixa: barras maiores, verde/vermelho, valor ao lado -->
+                <TextBlock Text="Fluxo de caixa (Entradas × Saídas)" FontSize="18" FontWeight="Bold"
+                           Foreground="{DynamicResource ForegroundBrush}" Margin="0,0,0,14"/>
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="24"
+                        Margin="0,0,0,28">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,20" Height="52">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Entradas" Foreground="{DynamicResource ForegroundBrush}"
+                                       VerticalAlignment="Center" FontSize="14"/>
+                            <Rectangle Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                                       Fill="{StaticResource BarraVerde}" RadiusX="4" RadiusY="4" Margin="0,4,0,4">
+                                <Rectangle.Width>
+                                    <Binding Path="RelatorioAtual.TotalRecebido" Converter="{StaticResource ValueToBarWidthConverter}">
+                                        <Binding.ConverterParameter>100000</Binding.ConverterParameter>
+                                    </Binding>
+                                </Rectangle.Width>
+                            </Rectangle>
+                            <TextBlock Grid.Column="2" Text="{Binding TotalRecebidoTexto}"
+                                       Foreground="{DynamicResource ForegroundBrush}" VerticalAlignment="Center" Margin="12,0,0,0" FontSize="14" FontWeight="SemiBold"/>
+                        </Grid>
+                        <Grid Height="52">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Saídas" Foreground="{DynamicResource ForegroundBrush}"
+                                       VerticalAlignment="Center" FontSize="14"/>
+                            <Rectangle Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                                       Fill="{StaticResource BarraVermelho}" RadiusX="4" RadiusY="4" Margin="0,4,0,4">
+                                <Rectangle.Width>
+                                    <Binding Path="RelatorioAtual.TotalDespesas" Converter="{StaticResource ValueToBarWidthConverter}">
+                                        <Binding.ConverterParameter>100000</Binding.ConverterParameter>
+                                    </Binding>
+                                </Rectangle.Width>
+                            </Rectangle>
+                            <TextBlock Grid.Column="2" Text="{Binding TotalDespesasTexto}"
+                                       Foreground="{DynamicResource ForegroundBrush}" VerticalAlignment="Center" Margin="12,0,0,0" FontSize="14" FontWeight="SemiBold"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Movimentações -->
+                <TextBlock Text="Movimentações (Fluxo de Caixa)" FontSize="18" FontWeight="Bold"
+                           Foreground="{DynamicResource ForegroundBrush}" Margin="0,0,0,14"/>
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="24">
+                    <ItemsControl ItemsSource="{Binding FluxoCaixa}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Data, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,16,0" VerticalAlignment="Center" FontSize="13"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Origem}" Foreground="{DynamicResource ForegroundBrush}" VerticalAlignment="Center" FontSize="14"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Tipo}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,16,0" VerticalAlignment="Center" FontSize="13"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding Valor, StringFormat='R$ {}{0:N2}'}"
+                                                   FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" FontSize="14"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
+

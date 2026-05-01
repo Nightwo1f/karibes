@@ -1,0 +1,12 @@
+bin/
+obj/
+*.user
+*.suo
+*.tmp
+*.log
+.vs/
+
+# Build outputs generated inside the WPF project
+Karibes.App/bin/
+Karibes.App/obj/
+

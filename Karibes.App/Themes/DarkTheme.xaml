@@ -1,171 +1,42 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
-    <!-- Tema Escuro -->
-    <Color x:Key="PrimaryBlack">#1A1A1A</Color>
-    <Color x:Key="SecondaryBlack">#2A2A2A</Color>
-    <Color x:Key="PrimaryYellow">#FFD400</Color>
-    <Color x:Key="TextLight">#FFFFFF</Color>
-    <Color x:Key="HoverYellow">#FFE033</Color>
-    <Color x:Key="PressedYellow">#CCAA00</Color>
-    <Color x:Key="ErrorRed">#DC3545</Color>
-    <Color x:Key="ErrorRedDark">#C82333</Color>
-    <Color x:Key="WarningOrange">#FFA500</Color>
+
+    <Color x:Key="PrimaryBlack">#151719</Color>
+    <Color x:Key="SecondaryBlack">#22262A</Color>
+    <Color x:Key="PrimaryYellow">#F2C94C</Color>
+    <Color x:Key="TextLight">#F4F6F8</Color>
+    <Color x:Key="HoverYellow">#FFE066</Color>
+    <Color x:Key="PressedYellow">#B99824</Color>
+    <Color x:Key="ErrorRed">#E05260</Color>
+    <Color x:Key="ErrorRedDark">#B73A45</Color>
+    <Color x:Key="WarningOrange">#FFB020</Color>
     <Color x:Key="White">#FFFFFF</Color>
-    
+
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource PrimaryBlack}"/>
     <SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="{StaticResource SecondaryBlack}"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource TextLight}"/>
-    <SolidColorBrush x:Key="PanelBrush" Color="{StaticResource SecondaryBlack}"/>
+    <SolidColorBrush x:Key="PanelBrush" Color="#1B1F23"/>
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource PrimaryYellow}"/>
+    <SolidColorBrush x:Key="AccentForegroundBrush" Color="#111111"/>
     <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverYellow}"/>
     <SolidColorBrush x:Key="PressedBrush" Color="{StaticResource PressedYellow}"/>
-    <SolidColorBrush x:Key="BorderBrush" Color="#555555"/>
-    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#CCCCCC"/>
-    <SolidColorBrush x:Key="PrimaryBlackBrush" Color="{StaticResource PrimaryBlack}"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="#3A4148"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#B7C0CA"/>
     <SolidColorBrush x:Key="TextLightBrush" Color="{StaticResource TextLight}"/>
     <SolidColorBrush x:Key="TextDarkBrush" Color="#000000"/>
+    <SolidColorBrush x:Key="PrimaryBlackBrush" Color="#111111"/>
     <SolidColorBrush x:Key="TabActiveBrush" Color="{StaticResource PrimaryYellow}"/>
     <SolidColorBrush x:Key="TabInactiveBrush" Color="Transparent"/>
-    <SolidColorBrush x:Key="TabHoverBrush" Color="#3A3A3A"/>
+    <SolidColorBrush x:Key="TabHoverBrush" Color="#30363D"/>
     <SolidColorBrush x:Key="ErrorRedBrush" Color="{StaticResource ErrorRed}"/>
     <SolidColorBrush x:Key="ErrorRedDarkBrush" Color="{StaticResource ErrorRedDark}"/>
     <SolidColorBrush x:Key="WarningOrangeBrush" Color="{StaticResource WarningOrange}"/>
     <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
-    
-    <!-- Button Styles -->
-    <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryBlackBrush}"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="15,8"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}" 
-                            CornerRadius="4"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center" 
-                                        VerticalAlignment="Center"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource HoverBrush}"/>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{StaticResource PressedBrush}"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-    
-    <!-- TextBox Styles -->
-    <Style x:Key="ModernTextBox" TargetType="TextBox">
-        <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="10,8"/>
-        <Setter Property="FontSize" Value="14"/>
-    </Style>
-    
-    <!-- ComboBox Styles -->
-    <Style x:Key="ModernComboBox" TargetType="ComboBox">
-        <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="10,8"/>
-        <Setter Property="FontSize" Value="14"/>
-    </Style>
-    
-    <!-- DatePicker Styles -->
-    <Style x:Key="ModernDatePicker" TargetType="DatePicker">
-        <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="10,8"/>
-        <Setter Property="FontSize" Value="14"/>
-    </Style>
-    
-    <!-- DataGrid Styles -->
-    <Style x:Key="ModernDataGrid" TargetType="DataGrid">
-        <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="AlternatingRowBackground" Value="{StaticResource BackgroundBrush}"/>
-        <Setter Property="GridLinesVisibility" Value="Horizontal"/>
-        <Setter Property="HeadersVisibility" Value="Column"/>
-        <Setter Property="AutoGenerateColumns" Value="False"/>
-        <Setter Property="CanUserAddRows" Value="False"/>
-        <Setter Property="SelectionMode" Value="Single"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-    </Style>
-    
-    <!-- Sidebar Button Style -->
-    <Style x:Key="SidebarButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Background" Value="{StaticResource TabInactiveBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="15,12"/>
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}" 
-                            CornerRadius="4"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                        VerticalAlignment="Center"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource TabHoverBrush}"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-    
-    <!-- Theme Button Style (pequeno) -->
-    <Style x:Key="ThemeButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource PrimaryBlackBrush}"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="8,4"/>
-        <Setter Property="FontSize" Value="11"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}" 
-                            CornerRadius="3"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center" 
-                                        VerticalAlignment="Center"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource HoverBrush}"/>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{StaticResource PressedBrush}"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-    
-</ResourceDictionary>
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="#1B1F23"/>
+    <SolidColorBrush x:Key="ReadOnlyBackgroundBrush" Color="#242A30"/>
+    <SolidColorBrush x:Key="RowAlternateBrush" Color="#1D2227"/>
+    <SolidColorBrush x:Key="DataGridHeaderBrush" Color="#2B3138"/>
+    <SolidColorBrush x:Key="SelectionBrush" Color="#705D1F"/>
+    <SolidColorBrush x:Key="SelectionForegroundBrush" Color="#FFFFFF"/>
 
+</ResourceDictionary>

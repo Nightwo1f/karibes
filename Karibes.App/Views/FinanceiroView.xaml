@@ -13,7 +13,7 @@
 
         <!-- Cabeçalho -->
         <Border Grid.Row="0" 
-                Background="{StaticResource PanelBrush}" 
+                Background="{DynamicResource PanelBrush}" 
                 Padding="20,15"
                 Margin="0,0,0,10">
             <Grid>
@@ -26,7 +26,7 @@
                            Text="💰 Controle Financeiro" 
                            FontSize="24" 
                            FontWeight="Bold"
-                           Foreground="{StaticResource ForegroundBrush}"
+                           Foreground="{DynamicResource ForegroundBrush}"
                            VerticalAlignment="Center"/>
 
                 <Button Grid.Column="1"
@@ -50,8 +50,8 @@
             <!-- LISTA DE LANÇAMENTOS -->
             <!-- ============================================ -->
             <Border Grid.Column="0" 
-                    Background="{StaticResource SecondaryBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource SecondaryBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     Margin="0,0,10,0"
                     Padding="15">
@@ -66,7 +66,7 @@
                         <TextBlock Text="Filtros" 
                                    FontSize="16" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,10"/>
 
                         <!-- Período -->
@@ -82,7 +82,7 @@
                             <TextBlock Grid.Column="1" 
                                        Text="até" 
                                        VerticalAlignment="Center"
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        HorizontalAlignment="Center"/>
                             <DatePicker Grid.Column="2"
                                         SelectedDate="{Binding FiltroDataFim}"
@@ -214,8 +214,8 @@
             <!-- PAINEL LATERAL -->
             <!-- ============================================ -->
             <Border Grid.Column="1" 
-                    Background="{StaticResource SecondaryBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource SecondaryBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     Padding="20">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -224,28 +224,28 @@
                         <TextBlock Text="Totalizadores" 
                                    FontSize="18" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,15"/>
 
                         <!-- Saldo do Caixa (Destaque) -->
-                        <Border Background="{StaticResource AccentBrush}"
+                        <Border Background="{DynamicResource AccentBrush}"
                                 Padding="20"
                                 CornerRadius="8"
                                 Margin="0,0,0,15">
                             <StackPanel>
                                 <TextBlock Text="Saldo do Caixa" 
                                            FontSize="14"
-                                           Foreground="{StaticResource PrimaryBlackBrush}"
+                                           Foreground="{DynamicResource PrimaryBlackBrush}"
                                            Margin="0,0,0,5"/>
-                                <TextBlock Text="{Binding SaldoCaixa, StringFormat='R$ {}{0:N2}'}"
+                                <TextBlock Text="{Binding SaldoCaixaTexto}"
                                            FontSize="28"
                                            FontWeight="Bold"
-                                           Foreground="{StaticResource PrimaryBlackBrush}"/>
+                                           Foreground="{DynamicResource PrimaryBlackBrush}"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Total Receitas -->
-                        <Border Background="{StaticResource BackgroundBrush}"
+                        <Border Background="{DynamicResource BackgroundBrush}"
                                 Padding="15"
                                 CornerRadius="4"
                                 Margin="0,0,0,10">
@@ -256,16 +256,16 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" 
                                            Text="Total Receitas" 
-                                           Foreground="{StaticResource ForegroundBrush}"/>
+                                           Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock Grid.Column="1" 
-                                           Text="{Binding TotalReceitas, StringFormat='R$ {}{0:N2}'}"
+                                           Text="{Binding TotalReceitasTexto}"
                                            Foreground="Green"
                                            FontWeight="SemiBold"/>
                             </Grid>
                         </Border>
 
                         <!-- Total Despesas -->
-                        <Border Background="{StaticResource BackgroundBrush}"
+                        <Border Background="{DynamicResource BackgroundBrush}"
                                 Padding="15"
                                 CornerRadius="4"
                                 Margin="0,0,0,20">
@@ -276,9 +276,9 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" 
                                            Text="Total Despesas" 
-                                           Foreground="{StaticResource ForegroundBrush}"/>
+                                           Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock Grid.Column="1" 
-                                           Text="{Binding TotalDespesas, StringFormat='R$ {}{0:N2}'}"
+                                           Text="{Binding TotalDespesasTexto}"
                                            Foreground="Red"
                                            FontWeight="SemiBold"/>
                             </Grid>
@@ -288,7 +288,7 @@
                         <TextBlock Text="Ações Rápidas" 
                                    FontSize="18" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,15"/>
 
                         <Button Content="✅ Marcar como Pago" 
@@ -301,25 +301,25 @@
                         <TextBlock Text="Novo Lançamento" 
                                    FontSize="18" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,20,0,15"/>
 
                         <!-- Tipo de Lançamento -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
                             <RadioButton Content="➕ Receita" 
                                          IsChecked="{Binding IsCadastroReceita}"
-                                         Foreground="{StaticResource ForegroundBrush}"
+                                         Foreground="{DynamicResource ForegroundBrush}"
                                          Margin="0,0,15,0"/>
                             <RadioButton Content="➖ Despesa" 
                                          IsChecked="{Binding IsCadastroReceita, Converter={StaticResource InverseBooleanConverter}}"
-                                         Foreground="{StaticResource ForegroundBrush}"/>
+                                         Foreground="{DynamicResource ForegroundBrush}"/>
                         </StackPanel>
 
                         <!-- Formulário -->
                         <StackPanel>
                             <!-- Categoria -->
                             <TextBlock Text="Categoria *" 
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBox Text="{Binding CategoriaNova}"
                                      Style="{StaticResource ModernTextBox}"
@@ -327,7 +327,7 @@
 
                             <!-- Descrição -->
                             <TextBlock Text="Descrição *" 
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBox Text="{Binding DescricaoNova}"
                                      Style="{StaticResource ModernTextBox}"
@@ -335,15 +335,15 @@
 
                             <!-- Valor -->
                             <TextBlock Text="Valor *" 
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
-                            <TextBox Text="{Binding ValorNovo}"
+                            <TextBox Text="{Binding ValorNovo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
                                      Style="{StaticResource ModernTextBox}"
                                      Margin="0,0,0,15"/>
 
                             <!-- Data de Vencimento -->
                             <TextBlock Text="Data de Vencimento" 
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <DatePicker SelectedDate="{Binding DataVencimentoNova}"
                                         Style="{StaticResource ModernDatePicker}"
@@ -351,9 +351,10 @@
 
                             <!-- Status -->
                             <TextBlock Text="Status" 
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
-                            <ComboBox SelectedItem="{Binding StatusNovo}"
+                            <ComboBox SelectedValue="{Binding StatusNovo}"
+                                      SelectedValuePath="Content"
                                       Style="{StaticResource ModernComboBox}"
                                       Margin="0,0,0,15">
                                 <ComboBoxItem Content="Pendente"/>
@@ -362,9 +363,10 @@
 
                             <!-- Forma de Pagamento -->
                             <TextBlock Text="Forma de Pagamento" 
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
-                            <ComboBox SelectedItem="{Binding FormaPagamentoNova}"
+                            <ComboBox SelectedValue="{Binding FormaPagamentoNova}"
+                                      SelectedValuePath="Content"
                                       Style="{StaticResource ModernComboBox}"
                                       Margin="0,0,0,15">
                                 <ComboBoxItem Content="Dinheiro"/>
@@ -374,7 +376,7 @@
 
                             <!-- Observações -->
                             <TextBlock Text="Observações" 
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBox Text="{Binding ObservacoesNova}"
                                      Style="{StaticResource ModernTextBox}"
@@ -388,7 +390,7 @@
                                         HorizontalAlignment="Right"
                                         Margin="0,10,0,0">
                                 <Button Content="Limpar" 
-                                        Style="{StaticResource PrimaryButton}"
+                                        Style="{StaticResource SecondaryButton}"
                                         Command="{Binding LimparFormularioCommand}"
                                         Padding="15,10"
                                         Margin="0,0,10,0"/>
@@ -411,4 +413,5 @@
         </Grid>
     </Grid>
 </UserControl>
+
 

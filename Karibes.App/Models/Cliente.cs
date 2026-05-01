@@ -23,11 +23,18 @@ namespace Karibes.App.Models
         public decimal LimiteCredito { get; set; }
         public decimal SaldoDevedor { get; set; }
         public decimal TotalPago { get; set; }
+        public DateTime? DataVencimentoCredito { get; set; }
         public DateTime DataCadastro { get; set; } = DateTime.Now;
         public DateTime DataUltimaAtualizacao { get; set; } = DateTime.Now;
         public bool Ativo { get; set; } = true;
         public string Observacoes { get; set; } = string.Empty;
         public List<PagamentoCliente> Pagamentos { get; set; } = new List<PagamentoCliente>();
+
+        public bool EstaDevendo => SaldoDevedor > 0;
+        public bool DividaVencida => EstaDevendo && DataVencimentoCredito.HasValue && DataVencimentoCredito.Value.Date < DateTime.Today;
+        public bool DividaProximaVencimento => EstaDevendo &&
+                                               DataVencimentoCredito.HasValue &&
+                                               DataVencimentoCredito.Value.Date >= DateTime.Today &&
+                                               DataVencimentoCredito.Value.Date <= DateTime.Today.AddDays(3);
     }
 }
-

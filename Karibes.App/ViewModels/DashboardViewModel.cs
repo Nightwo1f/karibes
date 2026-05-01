@@ -71,26 +71,24 @@ namespace Karibes.App.ViewModels
         }
 
         /// <summary>
-        /// Carrega todos os dados do dashboard
+        /// Carrega todos os dados do dashboard (valores consolidados do DashboardService).
+        /// Nenhum cálculo direto; apenas atribuição de valores já consolidados.
         /// </summary>
         public void AtualizarDashboard()
         {
             try
             {
-                // Vendas do dia
-                var (valorDia, qtdDia) = _dashboardService.ObterVendasDoDia();
-                VendasDia = valorDia;
-                QuantidadeVendasDia = qtdDia;
+                var hoje = DateTime.Now;
 
-                // Vendas do mês
-                var (valorMes, qtdMes) = _dashboardService.ObterVendasDoMes();
-                VendasMes = valorMes;
-                QuantidadeVendasMes = qtdMes;
+                var (totalVendasDia, quantidadeDia) = _dashboardService.ObterResumoDiario(hoje);
+                VendasDia = totalVendasDia;
+                QuantidadeVendasDia = quantidadeDia;
 
-                // Lucro estimado
-                LucroEstimado = _dashboardService.CalcularLucroEstimadoMes();
+                var (totalVendasMes, quantidadeMes, lucro) = _dashboardService.ObterResumoMensal(hoje);
+                VendasMes = totalVendasMes;
+                QuantidadeVendasMes = quantidadeMes;
+                LucroEstimado = lucro;
 
-                // Produtos com estoque crítico
                 var produtosCriticos = _dashboardService.ObterProdutosEstoqueCritico();
                 ProdutosEstoqueCritico.Clear();
                 foreach (var produto in produtosCriticos)
@@ -100,8 +98,6 @@ namespace Karibes.App.ViewModels
             }
             catch (Exception ex)
             {
-                // Em caso de erro, mantém valores zerados
-                // Não exibe mensagem para não interromper a experiência
                 System.Diagnostics.Debug.WriteLine($"Erro ao carregar dados do dashboard: {ex.Message}");
             }
         }

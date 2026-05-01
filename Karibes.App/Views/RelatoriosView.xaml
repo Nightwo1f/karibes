@@ -13,7 +13,7 @@
 
         <!-- Cabeçalho -->
         <Border Grid.Row="0" 
-                Background="{StaticResource PanelBrush}" 
+                Background="{DynamicResource PanelBrush}" 
                 Padding="20,15"
                 Margin="0,0,0,10">
             <Grid>
@@ -26,7 +26,7 @@
                            Text="📊 Relatório Financeiro Consolidado" 
                            FontSize="24" 
                            FontWeight="Bold"
-                           Foreground="{StaticResource ForegroundBrush}"
+                           Foreground="{DynamicResource ForegroundBrush}"
                            VerticalAlignment="Center"/>
 
                 <Button Grid.Column="1"
@@ -43,8 +43,8 @@
                       Padding="0,0,0,20">
             <StackPanel>
                 <!-- Filtros -->
-                <Border Background="{StaticResource SecondaryBackgroundBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1"
                         CornerRadius="8"
                         Padding="20"
@@ -58,7 +58,7 @@
 
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Data Início" 
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <DatePicker SelectedDate="{Binding DataInicio}"
                                          Style="{StaticResource ModernDatePicker}"/>
@@ -66,7 +66,7 @@
 
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="Data Fim" 
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <DatePicker SelectedDate="{Binding DataFim}"
                                          Style="{StaticResource ModernDatePicker}"/>
@@ -75,8 +75,8 @@
                 </Border>
 
                 <!-- Painel de Valores -->
-                <Border Background="{StaticResource SecondaryBackgroundBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1"
                         CornerRadius="8"
                         Padding="20">
@@ -92,7 +92,7 @@
                                    Text="Resumo Financeiro" 
                                    FontSize="18" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,20"/>
 
                         <!-- Valores Principais -->
@@ -107,34 +107,34 @@
 
                             <!-- Total Vendas -->
                             <Border Grid.Column="0"
-                                    Background="{StaticResource BackgroundBrush}"
-                                    BorderBrush="{StaticResource BorderBrush}"
+                                    Background="{DynamicResource BackgroundBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4"
                                     Padding="15">
                                 <StackPanel>
                                     <TextBlock Text="Total Vendas" 
                                                FontSize="12"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{Binding RelatorioAtual.TotalVendas, StringFormat='R$ {}{0:N2}'}" 
                                                FontSize="20" 
                                                FontWeight="Bold"
-                                               Foreground="{StaticResource AccentBrush}"/>
+                                               Foreground="{DynamicResource AccentBrush}"/>
                                 </StackPanel>
                             </Border>
 
                             <!-- Total Recebido -->
                             <Border Grid.Column="2"
-                                    Background="{StaticResource BackgroundBrush}"
-                                    BorderBrush="{StaticResource BorderBrush}"
+                                    Background="{DynamicResource BackgroundBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4"
                                     Padding="15">
                                 <StackPanel>
                                     <TextBlock Text="Total Recebido" 
                                                FontSize="12"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{Binding RelatorioAtual.TotalRecebido, StringFormat='R$ {}{0:N2}'}" 
                                                FontSize="20" 
@@ -145,15 +145,15 @@
 
                             <!-- Total a Receber -->
                             <Border Grid.Column="4"
-                                    Background="{StaticResource BackgroundBrush}"
-                                    BorderBrush="{StaticResource BorderBrush}"
+                                    Background="{DynamicResource BackgroundBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4"
                                     Padding="15">
                                 <StackPanel>
                                     <TextBlock Text="Total a Receber" 
                                                FontSize="12"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{Binding RelatorioAtual.TotalReceber, StringFormat='R$ {}{0:N2}'}" 
                                                FontSize="20" 
@@ -177,15 +177,15 @@
 
                             <!-- Total Despesas -->
                             <Border Grid.Column="0"
-                                    Background="{StaticResource BackgroundBrush}"
-                                    BorderBrush="{StaticResource BorderBrush}"
+                                    Background="{DynamicResource BackgroundBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4"
                                     Padding="15">
                                 <StackPanel>
                                     <TextBlock Text="Total Despesas" 
                                                FontSize="12"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{Binding RelatorioAtual.TotalDespesas, StringFormat='R$ {}{0:N2}'}" 
                                                FontSize="18" 
@@ -196,34 +196,34 @@
 
                             <!-- Crédito Concedido -->
                             <Border Grid.Column="2"
-                                    Background="{StaticResource BackgroundBrush}"
-                                    BorderBrush="{StaticResource BorderBrush}"
+                                    Background="{DynamicResource BackgroundBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4"
                                     Padding="15">
                                 <StackPanel>
                                     <TextBlock Text="Crédito Concedido" 
                                                FontSize="12"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{Binding RelatorioAtual.TotalCreditoConcedido, StringFormat='R$ {}{0:N2}'}" 
                                                FontSize="18" 
                                                FontWeight="Bold"
-                                               Foreground="{StaticResource ForegroundBrush}"/>
+                                               Foreground="{DynamicResource ForegroundBrush}"/>
                                 </StackPanel>
                             </Border>
 
                             <!-- Crédito Pago -->
                             <Border Grid.Column="4"
-                                    Background="{StaticResource BackgroundBrush}"
-                                    BorderBrush="{StaticResource BorderBrush}"
+                                    Background="{DynamicResource BackgroundBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4"
                                     Padding="15">
                                 <StackPanel>
                                     <TextBlock Text="Crédito Pago" 
                                                FontSize="12"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{Binding RelatorioAtual.TotalCreditoPago, StringFormat='R$ {}{0:N2}'}" 
                                                FontSize="18" 
@@ -234,8 +234,8 @@
 
                             <!-- Saldo Final (Destaque) -->
                             <Border Grid.Column="6"
-                                    Background="{StaticResource AccentBrush}"
-                                    BorderBrush="{StaticResource AccentBrush}"
+                                    Background="{DynamicResource AccentBrush}"
+                                    BorderBrush="{DynamicResource AccentBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4"
                                     Padding="15">
@@ -243,12 +243,12 @@
                                     <TextBlock Text="Saldo Final" 
                                                FontSize="14"
                                                FontWeight="Bold"
-                                               Foreground="{StaticResource PrimaryBlackBrush}"
+                                               Foreground="{DynamicResource PrimaryBlackBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{Binding RelatorioAtual.SaldoFinal, StringFormat='R$ {}{0:N2}'}" 
                                                FontSize="24" 
                                                FontWeight="Bold"
-                                               Foreground="{StaticResource PrimaryBlackBrush}"/>
+                                               Foreground="{DynamicResource PrimaryBlackBrush}"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -258,6 +258,7 @@
         </ScrollViewer>
     </Grid>
 </UserControl>
+
 
 
 

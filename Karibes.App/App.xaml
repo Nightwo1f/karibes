@@ -8,6 +8,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Colors.xaml"/>
+                <ResourceDictionary Source="Themes/KaribesTheme.xaml"/>
                 <ResourceDictionary Source="Resources/Styles.xaml"/>
                 <ResourceDictionary Source="Resources/Icons.xaml"/>
                 <!-- Tema será carregado dinamicamente pelo TemaService -->
@@ -23,6 +24,8 @@
             <converters:DecimalGreaterThanZeroConverter x:Key="DecimalGreaterThanZeroConverter"/>
             <converters:DecimalLessThanZeroConverter x:Key="DecimalLessThanZeroConverter"/>
             <converters:SubtractConverter x:Key="SubtractConverter"/>
+            <converters:ValueToBarWidthConverter x:Key="ValueToBarWidthConverter"/>
+            <converters:ZeroToEmptyConverter x:Key="ZeroToEmptyConverter"/>
             
             <!-- DataTemplates: Associam automaticamente ViewModels às Views -->
             <DataTemplate DataType="{x:Type viewModels:DashboardViewModel}">
@@ -40,6 +43,10 @@
             <DataTemplate DataType="{x:Type viewModels:VendasViewModel}">
                 <views:VendasView/>
             </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModels:TrocaDevolucaoViewModel}">
+                <views:TrocaDevolucaoView/>
+            </DataTemplate>
             
             <DataTemplate DataType="{x:Type viewModels:FinanceiroViewModel}">
                 <views:FinanceiroView/>
@@ -48,7 +55,9 @@
             <DataTemplate DataType="{x:Type viewModels:RelatoriosViewModel}">
                 <views:RelatoriosView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:RelatoriosGerenciaisViewModel}">
+                <views:RelatoriosGerenciaisView/>
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
-

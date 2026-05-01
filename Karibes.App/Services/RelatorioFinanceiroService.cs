@@ -1,6 +1,6 @@
+using Karibes.App.Data.Repositories;
 using Karibes.App.Models;
 using Karibes.App.Utils;
-using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,16 +13,15 @@ namespace Karibes.App.Services
     /// </summary>
     public class RelatorioFinanceiroService
     {
-        private readonly VendaService _vendaService;
-        private readonly FinanceiroService _financeiroService;
-        private readonly CreditoService _creditoService;
+        private readonly IVendaRepository _vendaRepository;
+        private readonly IFinanceiroRepository _financeiroRepository;
+        private readonly CalculoFinanceiroService _calculoFinanceiro;
 
         public RelatorioFinanceiroService()
         {
-            var excelService = new ExcelService();
-            _vendaService = new VendaService();
-            _financeiroService = new FinanceiroService(excelService);
-            _creditoService = new CreditoService();
+            _vendaRepository = RepositoryFactory.CriarVendaRepository();
+            _financeiroRepository = RepositoryFactory.CriarFinanceiroRepository();
+            _calculoFinanceiro = new CalculoFinanceiroService();
         }
 
         /// <summary>
@@ -38,59 +37,13 @@ namespace Karibes.App.Services
 
             try
             {
-                // Buscar vendas no período
-                var vendas = _vendaService.ObterTodas()
+                var vendas = _vendaRepository.ObterTodas()
                     .Where(v => v.DataVenda >= inicio && v.DataVenda <= fim)
                     .ToList();
+                var lancamentos = _financeiroRepository.ObterLancamentos(inicio, fim);
+                var historicoCredito = ObterHistoricoCreditoPeriodo(lancamentos);
 
-                // Calcular TotalVendas
-                relatorio.TotalVendas = vendas.Sum(v => v.ValorTotal);
-
-                // Calcular TotalRecebido (vendas à vista finalizadas)
-                var vendasAVista = vendas
-                    .Where(v => v.FormaPagamento != Constants.PagamentoCredito && 
-                                v.FormaPagamento != "Credito" &&
-                                v.Status == "Finalizada")
-                    .Sum(v => v.ValorTotal);
-
-                // Buscar histórico de crédito para calcular pagamentos no período
-                var historicoCredito = ObterHistoricoCreditoPeriodo(inicio, fim);
-                var creditosPagos = historicoCredito
-                    .Where(h => h.TipoMovimento == "Pagamento")
-                    .Sum(h => h.Valor);
-
-                relatorio.TotalRecebido = vendasAVista + creditosPagos;
-
-                // Calcular TotalReceber (vendas a crédito pendentes)
-                var vendasCredito = vendas
-                    .Where(v => v.FormaPagamento == Constants.PagamentoCredito || v.FormaPagamento == "Credito")
-                    .Sum(v => v.ValorTotal);
-
-                // TotalReceber = vendas a crédito - créditos já pagos no período
-                relatorio.TotalReceber = vendasCredito - creditosPagos;
-                if (relatorio.TotalReceber < 0)
-                    relatorio.TotalReceber = 0;
-
-                // Buscar despesas/receitas no período
-                var lancamentos = _financeiroService.ObterLancamentos(inicio, fim);
-                relatorio.TotalDespesas = lancamentos
-                    .Where(l => l.Tipo == Constants.TipoDespesa)
-                    .Sum(l => l.Valor);
-
-                // Calcular TotalCreditoConcedido (vendas a crédito no período)
-                relatorio.TotalCreditoConcedido = vendasCredito;
-
-                // Calcular TotalCreditoPago (pagamentos no período)
-                relatorio.TotalCreditoPago = creditosPagos;
-
-                // Calcular SaldoFinal: (TotalRecebido + Receitas Financeiras) - Despesas
-                // TotalRecebido já inclui vendas à vista + créditos pagos
-                var receitasFinanceiras = lancamentos
-                    .Where(l => l.Tipo == Constants.TipoReceita)
-                    .Sum(l => l.Valor);
-
-                // SaldoFinal = (Vendas à vista + Créditos pagos + Receitas financeiras) - Despesas
-                relatorio.SaldoFinal = (relatorio.TotalRecebido + receitasFinanceiras) - relatorio.TotalDespesas;
+                _calculoFinanceiro.CalcularResumoFinanceiro(inicio, fim, vendas, lancamentos, historicoCredito, relatorio);
             }
             catch (Exception ex)
             {
@@ -105,54 +58,40 @@ namespace Karibes.App.Services
         }
 
         /// <summary>
+        /// Obtém lucro estimado do período (TotalVendas - custo das vendas).
+        /// Delega cálculo de custo ao VendaService.
+        /// </summary>
+        public decimal ObterLucroEstimadoPeriodo(DateTime inicio, DateTime fim)
+        {
+            try
+            {
+                var relatorio = GerarRelatorio(inicio, fim);
+                var custo = _vendaRepository.ObterCustoTotalVendasPeriodo(inicio, fim);
+                return Math.Max(0, relatorio.TotalVendas - custo);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro ao obter lucro estimado: {ex.Message}");
+                return 0;
+            }
+        }
+
+        /// <summary>
         /// Obtém histórico de crédito de todos os clientes no período
         /// </summary>
-        private List<HistoricoCredito> ObterHistoricoCreditoPeriodo(DateTime inicio, DateTime fim)
+        private static List<HistoricoCredito> ObterHistoricoCreditoPeriodo(IEnumerable<LancamentoFinanceiro> lancamentos)
         {
-            var historico = new List<HistoricoCredito>();
-
-            // Buscar via Excel diretamente
-            var excelService = new ExcelService();
-            if (!excelService.FileExists(Constants.HistoricoCreditoFile))
-                return historico;
-
-            using var package = excelService.GetPackage(Constants.HistoricoCreditoFile);
-            if (package == null) return historico;
-
-            var worksheet = package.Workbook.Worksheets["HistoricoCredito"];
-            if (worksheet == null || worksheet.Dimension == null) return historico;
-
-            int rowCount = worksheet.Dimension.End.Row;
-
-            for (int row = 2; row <= rowCount; row++)
-            {
-                try
+            return lancamentos
+                .Where(l => l.Origem == "Pagamento de fiado")
+                .Select(l => new HistoricoCredito
                 {
-                    var dataMovimento = worksheet.Cells[row, 3].GetValue<DateTime>();
-                    if (dataMovimento >= inicio && dataMovimento <= fim)
-                    {
-                        var item = new HistoricoCredito
-                        {
-                            Id = worksheet.Cells[row, 1].GetValue<int>(),
-                            ClienteId = worksheet.Cells[row, 2].GetValue<int>(),
-                            DataMovimento = dataMovimento,
-                            TipoMovimento = worksheet.Cells[row, 4].GetValue<string>() ?? string.Empty,
-                            Valor = worksheet.Cells[row, 5].GetValue<decimal>(),
-                            SaldoAnterior = worksheet.Cells[row, 6].GetValue<decimal>(),
-                            SaldoAtual = worksheet.Cells[row, 7].GetValue<decimal>(),
-                            VendaId = worksheet.Cells[row, 8].GetValue<int?>(),
-                            Observacoes = worksheet.Cells[row, 9].GetValue<string>() ?? string.Empty
-                        };
-                        historico.Add(item);
-                    }
-                }
-                catch
-                {
-                    // Ignora linhas com erro
-                }
-            }
-
-            return historico;
+                    ClienteId = l.OrigemId ?? 0,
+                    DataMovimento = l.DataPagamento ?? l.DataLancamento,
+                    TipoMovimento = "Pagamento",
+                    Valor = l.Valor,
+                    Observacoes = l.Observacoes
+                })
+                .ToList();
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using Karibes.App.Utils;
 
 namespace Karibes.App.Services
@@ -15,7 +15,7 @@ namespace Karibes.App.Services
 
         public ExcelService()
         {
-            var baseDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Directory.GetCurrentDirectory();
+            var baseDirectory = AppContext.BaseDirectory;
             _dataPath = Path.Combine(baseDirectory, Constants.DataFolder, Constants.ExcelFolder);
             Directory.CreateDirectory(_dataPath);
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -136,4 +136,3 @@ namespace Karibes.App.Services
         }
     }
 }
-

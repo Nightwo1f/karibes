@@ -15,12 +15,14 @@ namespace Karibes.App.Services
     {
         private readonly ExcelService _excelService;
         private readonly CreditoService _creditoService;
+        private readonly CalculoFinanceiroService _calculoFinanceiro;
         private const string LancamentosSheetName = "Lancamentos";
 
         public FinanceiroService(ExcelService excelService)
         {
             _excelService = excelService;
             _creditoService = new CreditoService();
+            _calculoFinanceiro = new CalculoFinanceiroService();
             InicializarArquivo();
         }
 
@@ -78,7 +80,12 @@ namespace Karibes.App.Services
         /// <param name="cliente">Cliente que está pagando</param>
         /// <param name="valor">Valor do pagamento</param>
         /// <param name="observacao">Observação sobre o pagamento</param>
-        public void RegistrarPagamentoFiado(Cliente cliente, decimal valor, string observacao = "")
+        public void RegistrarPagamentoFiado(
+            Cliente cliente,
+            decimal valor,
+            string observacao = "",
+            DateTime? dataPagamento = null,
+            string formaPagamento = Constants.PagamentoDinheiro)
         {
             // Validações
             if (cliente == null)
@@ -91,16 +98,17 @@ namespace Karibes.App.Services
             _creditoService.RegistrarPagamento(cliente, valor, observacao);
 
             // Gerar lançamento financeiro do tipo Receita
+            var dataEfetiva = dataPagamento ?? DateTime.Now;
             var lancamento = new LancamentoFinanceiro
             {
                 Tipo = Constants.TipoReceita,
                 Categoria = "Recebimento de Crédito",
                 Descricao = $"Pagamento de fiado - Cliente: {cliente.Nome}",
                 Valor = valor,
-                DataLancamento = DateTime.Now,
-                DataPagamento = DateTime.Now,
+                DataLancamento = dataEfetiva,
+                DataPagamento = dataEfetiva,
                 Status = Constants.StatusPago,
-                FormaPagamento = "Dinheiro", // Pode ser ajustado conforme necessário
+                FormaPagamento = formaPagamento,
                 Origem = "Pagamento de fiado",
                 OrigemId = cliente.Id,
                 Observacoes = string.IsNullOrWhiteSpace(observacao) 
@@ -137,15 +145,15 @@ namespace Karibes.App.Services
                 var id = worksheet.Cells[row, 1].GetValue<int?>();
                 if (id == lancamentoId)
                 {
-                    worksheet.Cells[row, 8].Value = novoStatus; // Status na coluna 8
+                    worksheet.Cells[row, 9].Value = novoStatus; // Status na coluna 9
                     
                     // Se status for Pago e DataPagamento estiver vazia, preencher
                     if (novoStatus == Constants.StatusPago)
                     {
-                        var dataPagamento = worksheet.Cells[row, 7].GetValue<DateTime?>();
+                        var dataPagamento = worksheet.Cells[row, 8].GetValue<DateTime?>();
                         if (dataPagamento == null)
                         {
-                            worksheet.Cells[row, 7].Value = DateTime.Now;
+                            worksheet.Cells[row, 8].Value = DateTime.Now;
                         }
                     }
 
@@ -165,18 +173,9 @@ namespace Karibes.App.Services
         public decimal ObterSaldoCaixa(DateTime? ate = null)
         {
             var lancamentos = ObterLancamentos(
-                DateTime.MinValue, 
+                DateTime.MinValue,
                 ate ?? DateTime.MaxValue);
-
-            decimal receitas = lancamentos
-                .Where(l => l.Tipo == Constants.TipoReceita && l.Status == Constants.StatusPago)
-                .Sum(l => l.Valor);
-
-            decimal despesas = lancamentos
-                .Where(l => l.Tipo == Constants.TipoDespesa && l.Status == Constants.StatusPago)
-                .Sum(l => l.Valor);
-
-            return receitas - despesas;
+            return _calculoFinanceiro.CalcularSaldoCaixa(lancamentos);
         }
 
         /// <summary>
@@ -204,13 +203,58 @@ namespace Karibes.App.Services
             {
                 try
                 {
-                    var dataLancamento = worksheet.Cells[row, 5].GetValue<DateTime>();
+                    var dataLancamento = worksheet.Cells[row, 6].GetValue<DateTime>();
                     if (dataLancamento < inicio || dataLancamento > fim)
                         continue;
 
                     var lancamento = LerLancamentoDaLinha(worksheet, row);
                     if (lancamento != null)
                         lancamentos.Add(lancamento);
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+
+            return lancamentos;
+        }
+
+        /// <summary>
+        /// Obtém lançamentos com data de pagamento efetiva no período (Status Pago).
+        /// Usado para fluxo de caixa (entradas e saídas reais).
+        /// </summary>
+        /// <param name="inicio">Data inicial (inclusive)</param>
+        /// <param name="fim">Data final (inclusive)</param>
+        /// <returns>Lançamentos pagos cuja data de pagamento está no período</returns>
+        public List<LancamentoFinanceiro> ObterLancamentosComPagamentoNoPeriodo(DateTime inicio, DateTime fim)
+        {
+            var lancamentos = new List<LancamentoFinanceiro>();
+
+            if (!_excelService.FileExists(Constants.FinanceiroFile))
+                return lancamentos;
+
+            using var package = _excelService.GetPackage(Constants.FinanceiroFile);
+            if (package == null) return lancamentos;
+
+            var worksheet = package.Workbook.Worksheets[LancamentosSheetName];
+            if (worksheet == null || worksheet.Dimension == null) return lancamentos;
+
+            int rowCount = worksheet.Dimension.End.Row;
+
+            for (int row = 2; row <= rowCount; row++)
+            {
+                try
+                {
+                    var lancamento = LerLancamentoDaLinha(worksheet, row);
+                    if (lancamento == null || lancamento.Status != Constants.StatusPago)
+                        continue;
+
+                    var dataPagamento = lancamento.DataPagamento ?? lancamento.DataLancamento;
+                    if (dataPagamento < inicio || dataPagamento > fim)
+                        continue;
+
+                    lancamentos.Add(lancamento);
                 }
                 catch
                 {
@@ -268,14 +312,7 @@ namespace Karibes.App.Services
             var fimMes = inicioMes.AddMonths(1).AddSeconds(-1);
 
             var lancamentos = ObterLancamentos(inicioMes, fimMes);
-
-            decimal receitaTotal = lancamentos
-                .Where(l => l.Tipo == Constants.TipoReceita && l.Status == Constants.StatusPago)
-                .Sum(l => l.Valor);
-
-            decimal despesaTotal = lancamentos
-                .Where(l => l.Tipo == Constants.TipoDespesa && l.Status == Constants.StatusPago)
-                .Sum(l => l.Valor);
+            var (receitaTotal, despesaTotal) = _calculoFinanceiro.CalcularReceitasEDespesasPagas(lancamentos);
 
             return new BalancoMensal
             {
@@ -420,4 +457,3 @@ namespace Karibes.App.Services
         }
     }
 }
-

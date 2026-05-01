@@ -37,14 +37,14 @@ namespace Karibes.App.Services
                 var resources = app.Resources;
                 var mergedDictionaries = resources.MergedDictionaries;
 
-                // Remove tema existente
-                var themeToRemove = mergedDictionaries.FirstOrDefault(d =>
-                    d.Source?.OriginalString?.Contains("Theme.xaml") == true ||
-                    d.Source?.OriginalString?.Contains("LightTheme") == true ||
-                    d.Source?.OriginalString?.Contains("DarkTheme") == true ||
-                    d.Source?.OriginalString?.Contains("KaribesTheme") == true);
+                var themesToRemove = mergedDictionaries
+                    .Where(d =>
+                        d.Source?.OriginalString?.Contains("LightTheme") == true ||
+                        d.Source?.OriginalString?.Contains("DarkTheme") == true ||
+                        d.Source?.OriginalString?.Contains("KaribesTheme") == true)
+                    .ToList();
 
-                if (themeToRemove != null)
+                foreach (var themeToRemove in themesToRemove)
                     mergedDictionaries.Remove(themeToRemove);
 
                 // Adiciona novo tema
@@ -68,7 +68,15 @@ namespace Karibes.App.Services
                     }
                 };
 
-                mergedDictionaries.Add(themeDict);
+                var stylesIndex = mergedDictionaries
+                    .Select((dictionary, index) => new { dictionary, index })
+                    .FirstOrDefault(item => item.dictionary.Source?.OriginalString?.Contains("Resources/Styles.xaml") == true)
+                    ?.index;
+
+                if (stylesIndex.HasValue)
+                    mergedDictionaries.Insert(stylesIndex.Value, themeDict);
+                else
+                    mergedDictionaries.Add(themeDict);
                 
                 // Salva preferência
                 SalvarPreferenciaTema(tema);
@@ -140,4 +148,3 @@ namespace Karibes.App.Services
         }
     }
 }
-

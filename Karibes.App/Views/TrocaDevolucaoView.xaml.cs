@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Controls;
-using Karibes.App.Models;
 using Karibes.App.ViewModels;
 
 namespace Karibes.App.Views
@@ -13,17 +12,6 @@ namespace Karibes.App.Views
         public TrocaDevolucaoView()
         {
             InitializeComponent();
-        }
-
-        private void RemoverItemNovo_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.DataContext is ItemVenda item)
-            {
-                if (DataContext is TrocaDevolucaoViewModel viewModel)
-                {
-                    viewModel.RemoverItemNovoCommand.Execute(item);
-                }
-            }
         }
 
         private void DataGrid_CellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
@@ -43,4 +31,3 @@ namespace Karibes.App.Views
         }
     }
 }
-

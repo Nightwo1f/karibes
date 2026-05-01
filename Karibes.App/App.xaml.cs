@@ -67,10 +67,19 @@ namespace Karibes.App
                 // Não interrompe a execução
             }
 
+            try
+            {
+                Karibes.App.Data.Repositories.RepositoryFactory.CriarProdutoRepository();
+                new BackupService().CriarBackupAutomaticoSqlite();
+            }
+            catch (System.Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao criar backup automático do SQLite: {ex.Message}");
+            }
+
             // Cria e exibe a MainWindow
             var window = new MainWindow();
             window.Show();
         }
     }
 }
-

@@ -10,6 +10,7 @@ namespace Karibes.App.Models
         public DateTime PeriodoInicio { get; set; }
         public DateTime PeriodoFim { get; set; }
         public decimal TotalVendas { get; set; }
+        public int QuantidadeVendas { get; set; }
         public decimal TotalRecebido { get; set; }
         public decimal TotalReceber { get; set; }
         public decimal TotalDespesas { get; set; }

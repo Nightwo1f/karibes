@@ -13,7 +13,7 @@
 
         <!-- Cabeçalho -->
         <Border Grid.Row="0" 
-                Background="{StaticResource PanelBrush}" 
+                Background="{DynamicResource PanelBrush}" 
                 Padding="20,15"
                 Margin="0,0,0,10">
             <Grid>
@@ -26,12 +26,12 @@
                            Text="🔄 Trocas e Devoluções" 
                            FontSize="24" 
                            FontWeight="Bold"
-                           Foreground="{StaticResource ForegroundBrush}"
+                           Foreground="{DynamicResource ForegroundBrush}"
                            VerticalAlignment="Center"/>
 
                 <Button Grid.Column="1"
-                        Content="🗑️ Limpar" 
-                        Style="{StaticResource PrimaryButton}"
+                        Content="Limpar" 
+                        Style="{StaticResource SecondaryButton}"
                         Command="{Binding LimparCommand}"
                         Padding="15,8"/>
             </Grid>
@@ -41,8 +41,8 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="0,0,0,20">
                 <!-- Busca de Venda -->
-                <Border Background="{StaticResource SecondaryBackgroundBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1"
                         Padding="20"
                         Margin="0,0,0,15">
@@ -56,7 +56,7 @@
                             <TextBlock Text="Buscar Venda" 
                                        FontSize="16" 
                                        FontWeight="Bold"
-                                       Foreground="{StaticResource ForegroundBrush}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,10"/>
                             <TextBox Text="{Binding NumeroVendaBusca}"
                                      Style="{StaticResource ModernTextBox}"
@@ -74,8 +74,8 @@
                 </Border>
 
                 <!-- Informações da Venda -->
-                <Border Background="{StaticResource SecondaryBackgroundBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1"
                         Padding="20"
                         Margin="0,0,0,15"
@@ -84,7 +84,7 @@
                         <TextBlock Text="Informações da Venda" 
                                    FontSize="16" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,15"/>
 
                         <Grid>
@@ -102,60 +102,60 @@
                             <!-- Número da Venda -->
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,10">
                                 <TextBlock Text="Número" 
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            FontSize="12"/>
                                 <TextBlock Text="{Binding VendaSelecionada.NumeroVenda}" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            FontWeight="SemiBold"/>
                             </StackPanel>
 
                             <!-- Cliente -->
                             <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,10,10">
                                 <TextBlock Text="Cliente" 
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            FontSize="12"/>
                                 <TextBlock Text="{Binding VendaSelecionada.Cliente.Nome}" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            FontWeight="SemiBold"/>
                             </StackPanel>
 
                             <!-- Data -->
                             <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,10">
                                 <TextBlock Text="Data" 
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            FontSize="12"/>
                                 <TextBlock Text="{Binding VendaSelecionada.DataVenda, StringFormat=dd/MM/yyyy HH:mm}" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            FontWeight="SemiBold"/>
                             </StackPanel>
 
                             <!-- Forma de Pagamento -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,10,10">
                                 <TextBlock Text="Forma de Pagamento" 
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            FontSize="12"/>
                                 <TextBlock Text="{Binding VendaSelecionada.FormaPagamento}" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            FontWeight="SemiBold"/>
                             </StackPanel>
 
                             <!-- Status -->
                             <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,10,10">
                                 <TextBlock Text="Status" 
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            FontSize="12"/>
                                 <TextBlock Text="{Binding VendaSelecionada.Status}" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            FontWeight="SemiBold"/>
                             </StackPanel>
 
                             <!-- Valor Total -->
                             <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,10">
                                 <TextBlock Text="Valor Total" 
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            FontSize="12"/>
                                 <TextBlock Text="{Binding VendaSelecionada.ValorTotal, StringFormat=C2}" 
-                                           Foreground="{StaticResource AccentBrush}"
+                                           Foreground="{DynamicResource AccentBrush}"
                                            FontWeight="Bold"
                                            FontSize="16"/>
                             </StackPanel>
@@ -164,8 +164,8 @@
                 </Border>
 
                 <!-- Modo de Operação -->
-                <Border Background="{StaticResource SecondaryBackgroundBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1"
                         Padding="20"
                         Margin="0,0,0,15"
@@ -174,23 +174,23 @@
                         <TextBlock Text="Tipo de Operação" 
                                    FontSize="16" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,10"/>
                         <StackPanel Orientation="Horizontal">
                             <RadioButton Content="📤 Devolução" 
                                          IsChecked="{Binding IsModoDevolucao}"
-                                         Foreground="{StaticResource ForegroundBrush}"
+                                         Foreground="{DynamicResource ForegroundBrush}"
                                          Margin="0,0,15,0"/>
                             <RadioButton Content="🔄 Troca" 
                                          IsChecked="{Binding IsModoDevolucao, Converter={StaticResource InverseBooleanConverter}}"
-                                         Foreground="{StaticResource ForegroundBrush}"/>
+                                         Foreground="{DynamicResource ForegroundBrush}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
                 <!-- Itens da Venda para Devolução -->
-                <Border Background="{StaticResource SecondaryBackgroundBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1"
                         Padding="20"
                         Margin="0,0,0,15"
@@ -199,7 +199,7 @@
                         <TextBlock Text="Itens da Venda" 
                                    FontSize="16" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,15"/>
 
                         <DataGrid ItemsSource="{Binding ItensDevolucao}"
@@ -258,7 +258,7 @@
                         </DataGrid>
 
                         <!-- Total Devolução -->
-                        <Border Background="{StaticResource BackgroundBrush}"
+                        <Border Background="{DynamicResource BackgroundBrush}"
                                 Padding="15"
                                 CornerRadius="4"
                                 Margin="0,15,0,0">
@@ -271,9 +271,9 @@
                                            Text="Total a Devolver" 
                                            FontSize="14"
                                            FontWeight="Bold"
-                                           Foreground="{StaticResource ForegroundBrush}"/>
+                                           Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock Grid.Column="1" 
-                                           Text="{Binding ValorTotalDevolucao, StringFormat='R$ {}{0:N2}'}"
+                                           Text="{Binding ValorTotalDevolucaoTexto}"
                                            FontSize="18"
                                            FontWeight="Bold"
                                            Foreground="Red"/>
@@ -283,8 +283,8 @@
                 </Border>
 
                 <!-- Novos Itens para Troca -->
-                <Border Background="{StaticResource SecondaryBackgroundBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1"
                         Padding="20"
                         Margin="0,0,0,15"
@@ -293,7 +293,7 @@
                         <TextBlock Text="Novos Itens para Troca" 
                                    FontSize="16" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,15"/>
 
                         <!-- Adicionar Produto -->
@@ -314,7 +314,7 @@
                                         <StackPanel>
                                             <TextBlock Text="{Binding Nome}" FontWeight="SemiBold"/>
                                             <TextBlock FontSize="11" 
-                                                       Foreground="{StaticResource TextSecondaryBrush}">
+                                                       Foreground="{DynamicResource TextSecondaryBrush}">
                                                 <TextBlock.Text>
                                                     <MultiBinding StringFormat="Cód: {}{0} | Estoque: {}{1} | R$ {}{2:N2}">
                                                         <Binding Path="Codigo"/>
@@ -388,7 +388,8 @@
                                             <Button Content="❌" 
                                                     Style="{StaticResource PrimaryButton}"
                                                     Padding="8,4"
-                                                    Click="RemoverItemNovo_Click"/>
+                                                    Command="{Binding DataContext.RemoverItemNovoCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -396,7 +397,7 @@
                         </DataGrid>
 
                         <!-- Total Novos Itens -->
-                        <Border Background="{StaticResource BackgroundBrush}"
+                        <Border Background="{DynamicResource BackgroundBrush}"
                                 Padding="15"
                                 CornerRadius="4">
                             <Grid>
@@ -408,9 +409,9 @@
                                            Text="Total Novos Itens" 
                                            FontSize="14"
                                            FontWeight="Bold"
-                                           Foreground="{StaticResource ForegroundBrush}"/>
+                                           Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock Grid.Column="1" 
-                                           Text="{Binding ValorTotalNovos, StringFormat='R$ {}{0:N2}'}"
+                                           Text="{Binding ValorTotalNovosTexto}"
                                            FontSize="18"
                                            FontWeight="Bold"
                                            Foreground="Green"/>
@@ -420,7 +421,7 @@
                 </Border>
 
                 <!-- Resumo e Confirmação -->
-                <Border Background="{StaticResource AccentBrush}"
+                <Border Background="{DynamicResource AccentBrush}"
                         Padding="20"
                         CornerRadius="8"
                         Margin="0,0,0,15"
@@ -429,7 +430,7 @@
                         <TextBlock Text="Resumo da Operação" 
                                    FontSize="18" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource PrimaryBlackBrush}"
+                                   Foreground="{DynamicResource PrimaryBlackBrush}"
                                    Margin="0,0,0,15"/>
 
                         <Grid>
@@ -446,23 +447,23 @@
                             <!-- Valor Devolvido -->
                             <TextBlock Grid.Row="0" Grid.Column="0"
                                        Text="Valor Devolvido:" 
-                                       Foreground="{StaticResource PrimaryBlackBrush}"
+                                       Foreground="{DynamicResource PrimaryBlackBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBlock Grid.Row="0" Grid.Column="1"
-                                       Text="{Binding ValorTotalDevolucao, StringFormat='R$ {}{0:N2}'}"
-                                       Foreground="{StaticResource PrimaryBlackBrush}"
+                                       Text="{Binding ValorTotalDevolucaoTexto}"
+                                       Foreground="{DynamicResource PrimaryBlackBrush}"
                                        FontWeight="SemiBold"
                                        Margin="0,0,0,5"/>
 
                             <!-- Valor Novos (apenas em troca) -->
                             <TextBlock Grid.Row="1" Grid.Column="0"
                                        Text="Valor Novos Itens:" 
-                                       Foreground="{StaticResource PrimaryBlackBrush}"
+                                       Foreground="{DynamicResource PrimaryBlackBrush}"
                                        Margin="0,0,0,5"
                                        Visibility="{Binding IsModoDevolucao, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
                             <TextBlock Grid.Row="1" Grid.Column="1"
-                                       Text="{Binding ValorTotalNovos, StringFormat='R$ {}{0:N2}'}"
-                                       Foreground="{StaticResource PrimaryBlackBrush}"
+                                       Text="{Binding ValorTotalNovosTexto}"
+                                       Foreground="{DynamicResource PrimaryBlackBrush}"
                                        FontWeight="SemiBold"
                                        Margin="0,0,0,5"
                                        Visibility="{Binding IsModoDevolucao, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
@@ -475,14 +476,14 @@
                                        Text="Diferença:" 
                                        FontSize="16"
                                        FontWeight="Bold"
-                                       Foreground="{StaticResource PrimaryBlackBrush}"/>
+                                       Foreground="{DynamicResource PrimaryBlackBrush}"/>
                             <TextBlock Grid.Row="3" Grid.Column="1"
-                                       Text="{Binding DiferencaValor, StringFormat='R$ {}{0:N2}'}"
+                                       Text="{Binding DiferencaValorTexto}"
                                        FontSize="20"
                                        FontWeight="Bold">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
-                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBlackBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource PrimaryBlackBrush}"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding DiferencaValor, Converter={StaticResource DecimalLessThanZeroConverter}}" Value="True">
                                                 <Setter Property="Foreground" Value="Red"/>
@@ -499,15 +500,15 @@
                 </Border>
 
                 <!-- Observações -->
-                <Border Background="{StaticResource SecondaryBackgroundBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1"
                         Padding="20"
                         Margin="0,0,0,15"
                         Visibility="{Binding VendaSelecionada, Converter={StaticResource NullToVisibilityConverter}}">
                     <StackPanel>
                         <TextBlock Text="Observações" 
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,10"/>
                         <TextBox Text="{Binding Observacao}"
                                  Style="{StaticResource ModernTextBox}"
@@ -521,7 +522,7 @@
                 <StackPanel Orientation="Horizontal" 
                             HorizontalAlignment="Right"
                             Visibility="{Binding VendaSelecionada, Converter={StaticResource NullToVisibilityConverter}}">
-                    <Button Content="✅ Confirmar Devolução" 
+                    <Button Content="Confirmar Devolução" 
                             Style="{StaticResource PrimaryButton}"
                             Command="{Binding ConfirmarDevolucaoCommand}"
                             Padding="20,12"
@@ -529,7 +530,7 @@
                             FontSize="14"
                             FontWeight="Bold"
                             Visibility="{Binding IsModoDevolucao, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <Button Content="✅ Confirmar Troca" 
+                    <Button Content="Confirmar Troca" 
                             Style="{StaticResource PrimaryButton}"
                             Command="{Binding ConfirmarTrocaCommand}"
                             Padding="20,12"

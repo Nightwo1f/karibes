@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using Karibes.App.Data.Repositories;
 using Karibes.App.Models;
 using Karibes.App.Services;
 using Karibes.App.Utils;
@@ -14,10 +16,10 @@ namespace Karibes.App.ViewModels
     /// </summary>
     public class VendasViewModel : BaseViewModel
     {
-        private readonly VendaService _vendaService;
-        private readonly ProdutoService _produtoService;
-        private readonly ClienteService _clienteService;
-        private readonly CreditoService _creditoService;
+        private readonly IVendaRepository _vendaRepository;
+        private readonly IProdutoRepository _produtoRepository;
+        private readonly IClienteRepository _clienteRepository;
+        private readonly CalculoFinanceiroService _calculoFinanceiro;
         private readonly DashboardViewModel _dashboard;
 
         // Listagem de vendas
@@ -54,7 +56,11 @@ namespace Karibes.App.ViewModels
         public Venda? VendaSelecionada
         {
             get => _vendaSelecionada;
-            set => SetProperty(ref _vendaSelecionada, value);
+            set
+            {
+                if (SetProperty(ref _vendaSelecionada, value))
+                    CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         public DateTime FiltroDataInicio
@@ -255,17 +261,20 @@ namespace Karibes.App.ViewModels
             }
         }
 
-        public decimal SubtotalVenda => ItensCarrinho?.Sum(i => i.ValorTotal) ?? 0;
-        public decimal TotalVenda => SubtotalVenda - DescontoVenda;
+        public decimal SubtotalVenda => _calculoFinanceiro.CalcularSubtotalItens(ItensCarrinho);
+        public decimal TotalVenda => _calculoFinanceiro.CalcularTotalComDesconto(SubtotalVenda, DescontoVenda);
+        public string SubtotalVendaTexto => SubtotalVenda.ToString("C2");
+        public string TotalVendaTexto => TotalVenda.ToString("C2");
         public bool PodeVenderFiado
         {
             get
             {
                 try
                 {
-                    if (FormaPagamento != Constants.PagamentoCredito || ClienteSelecionado == null || _creditoService == null)
+                    if (FormaPagamento != Constants.PagamentoCredito || ClienteSelecionado == null)
                         return false;
-                    return _creditoService.PodeComprarNoCredito(ClienteSelecionado, TotalVenda);
+                    return ClienteSelecionado.Ativo &&
+                           ClienteSelecionado.SaldoDevedor + TotalVenda <= ClienteSelecionado.LimiteCredito;
                 }
                 catch
                 {
@@ -288,10 +297,10 @@ namespace Karibes.App.ViewModels
 
         public VendasViewModel(DashboardViewModel dashboard)
         {
-            _vendaService = new VendaService();
-            _produtoService = new ProdutoService();
-            _clienteService = new ClienteService();
-            _creditoService = new CreditoService();
+            _vendaRepository = RepositoryFactory.CriarVendaRepository();
+            _produtoRepository = RepositoryFactory.CriarProdutoRepository();
+            _clienteRepository = RepositoryFactory.CriarClienteRepository();
+            _calculoFinanceiro = new CalculoFinanceiroService();
             _dashboard = dashboard;
 
             Vendas = new ObservableCollection<Venda>();
@@ -326,7 +335,7 @@ namespace Karibes.App.ViewModels
         {
             try
             {
-                var vendas = _vendaService.ObterTodas();
+                var vendas = _vendaRepository.ObterTodas();
                 Vendas.Clear();
                 foreach (var venda in vendas)
                 {
@@ -475,11 +484,11 @@ namespace Karibes.App.ViewModels
 
                 if (FormaPagamento == Constants.PagamentoCredito)
                 {
-                    _vendaService.RegistrarVendaFiada(venda);
+                    _vendaRepository.RegistrarVendaFiada(venda);
                 }
                 else
                 {
-                    _vendaService.RegistrarVendaAVista(venda);
+                    _vendaRepository.RegistrarVendaAVista(venda);
                 }
 
                 _dashboard.AtualizarDashboard();
@@ -518,7 +527,7 @@ namespace Karibes.App.ViewModels
             {
                 try
                 {
-                    _vendaService.CancelarVenda(VendaSelecionada.Id, "Cancelamento solicitado pelo usuário");
+                    _vendaRepository.CancelarVenda(VendaSelecionada.Id, "Cancelamento solicitado pelo usuário");
                     _dashboard.AtualizarDashboard();
                     MessageBox.Show("Venda cancelada com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
                     CarregarVendas();
@@ -556,7 +565,10 @@ namespace Karibes.App.ViewModels
         {
             OnPropertyChanged(nameof(SubtotalVenda));
             OnPropertyChanged(nameof(TotalVenda));
+            OnPropertyChanged(nameof(SubtotalVendaTexto));
+            OnPropertyChanged(nameof(TotalVendaTexto));
             OnPropertyChanged(nameof(PodeVenderFiado));
+            CommandManager.InvalidateRequerySuggested();
         }
 
         /// <summary>
@@ -566,7 +578,7 @@ namespace Karibes.App.ViewModels
         {
             try
             {
-                var produtos = _produtoService.ObterTodos().Where(p => p.Ativo).ToList();
+                var produtos = _produtoRepository.ObterTodos().Where(p => p.Ativo).ToList();
                 ProdutosDisponiveis.Clear();
                 foreach (var produto in produtos)
                 {
@@ -588,7 +600,7 @@ namespace Karibes.App.ViewModels
         {
             try
             {
-                var clientes = _clienteService.ObterTodos().Where(c => c.Ativo).ToList();
+                var clientes = _clienteRepository.ObterTodos().Where(c => c.Ativo).ToList();
                 ClientesDisponiveis.Clear();
                 foreach (var cliente in clientes)
                 {
@@ -616,10 +628,11 @@ namespace Karibes.App.ViewModels
                     return;
                 }
 
-                var produtos = _produtoService.ObterTodos()
+                var produtos = _produtoRepository.ObterTodos()
                     .Where(p => p.Ativo && 
                         (p.Nome.ToLower().Contains(BuscaProduto.ToLower()) ||
-                         p.Codigo.ToLower().Contains(BuscaProduto.ToLower())))
+                         p.Codigo.ToLower().Contains(BuscaProduto.ToLower()) ||
+                         (!string.IsNullOrWhiteSpace(p.Categoria) && p.Categoria.ToLower().Contains(BuscaProduto.ToLower()))))
                     .ToList();
 
                 ProdutosDisponiveis.Clear();
@@ -648,7 +661,7 @@ namespace Karibes.App.ViewModels
                 }
 
                 var termoLower = BuscaCliente.ToLower();
-                var todosClientes = _clienteService.ObterTodos().Where(c => c.Ativo).ToList();
+                var todosClientes = _clienteRepository.ObterTodos().Where(c => c.Ativo).ToList();
                 
                 var clientesFiltrados = todosClientes.Where(c =>
                     c.Nome.ToLower().Contains(termoLower) ||
@@ -680,7 +693,7 @@ namespace Karibes.App.ViewModels
                 if (Vendas == null)
                     return;
 
-                var todasVendas = _vendaService.ObterTodas();
+                var todasVendas = _vendaRepository.ObterTodas();
 
                 var filtradas = todasVendas.AsQueryable();
 
@@ -724,4 +737,3 @@ namespace Karibes.App.ViewModels
         }
     }
 }
-

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using Karibes.App.Data.Repositories;
 using Karibes.App.Models;
 using Karibes.App.Services;
 using Karibes.App.Utils;
@@ -12,9 +14,10 @@ namespace Karibes.App.ViewModels
     public class ClientesViewModel : BaseViewModel
     {
         private readonly DashboardViewModel _dashboard;
-        private readonly ClienteService _clienteService;
-        private readonly VendaService _vendaService;
-        private readonly CreditoService _creditoService;
+        private readonly IClienteRepository _clienteRepository;
+        private readonly IVendaRepository _vendaRepository;
+        private readonly IFinanceiroRepository _financeiroRepository;
+        private readonly PdfExportService _pdfExportService = new();
         private ObservableCollection<Cliente> _clientes = new();
         private ObservableCollection<Cliente> _clientesFiltrados = new();
         private Cliente? _clienteSelecionado;
@@ -45,13 +48,30 @@ namespace Karibes.App.ViewModels
         public Cliente? ClienteSelecionado
         {
             get => _clienteSelecionado;
-            set => SetProperty(ref _clienteSelecionado, value);
+            set
+            {
+                if (SetProperty(ref _clienteSelecionado, value))
+                {
+                    if (value != null)
+                        CarregarHistoricoCliente(value.Id);
+                    else
+                    {
+                        ComprasCliente.Clear();
+                        HistoricoPagamentos.Clear();
+                    }
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
 
         public Cliente? ClienteEditando
         {
             get => _clienteEditando;
-            set => SetProperty(ref _clienteEditando, value);
+            set
+            {
+                if (SetProperty(ref _clienteEditando, value))
+                    CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         public string TextoBusca
@@ -117,13 +137,14 @@ namespace Karibes.App.ViewModels
         public RelayCommand SalvarClienteCommand { get; }
         public RelayCommand CancelarEdicaoCommand { get; }
         public RelayCommand RegistrarPagamentoCommand { get; }
+        public RelayCommand ExportarPdfCommand { get; }
 
         public ClientesViewModel(DashboardViewModel dashboard)
         {
             _dashboard = dashboard;
-            _clienteService = new ClienteService();
-            _vendaService = new VendaService();
-            _creditoService = new CreditoService();
+            _clienteRepository = RepositoryFactory.CriarClienteRepository();
+            _vendaRepository = RepositoryFactory.CriarVendaRepository();
+            _financeiroRepository = RepositoryFactory.CriarFinanceiroRepository();
             Clientes = new ObservableCollection<Cliente>();
             ClientesFiltrados = new ObservableCollection<Cliente>();
             ComprasCliente = new ObservableCollection<Venda>();
@@ -135,9 +156,25 @@ namespace Karibes.App.ViewModels
             SalvarClienteCommand = new RelayCommand(_ => SalvarCliente(), _ => ClienteEditando != null);
             CancelarEdicaoCommand = new RelayCommand(_ => CancelarEdicao());
             RegistrarPagamentoCommand = new RelayCommand(_ => RegistrarPagamento(), _ => ClienteEditando != null && ClienteEditando.SaldoDevedor > 0);
+            ExportarPdfCommand = new RelayCommand(_ => ExportarPdf());
             
             // Carrega clientes ao inicializar
             CarregarClientes();
+        }
+
+        private void ExportarPdf()
+        {
+            try
+            {
+                var pasta = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var caminho = System.IO.Path.Combine(pasta, $"Clientes_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+                _pdfExportService.ExportarClientes(ClientesFiltrados, caminho);
+                MessageBox.Show($"PDF exportado em:\n{caminho}", "Exportação", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao exportar PDF: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         /// <summary>
@@ -147,7 +184,7 @@ namespace Karibes.App.ViewModels
         {
             try
             {
-                var clientes = _clienteService.ObterTodos();
+                var clientes = _clienteRepository.ObterTodos();
                 Clientes.Clear();
                 foreach (var cliente in clientes.OrderBy(c => c.Nome))
                 {
@@ -236,6 +273,7 @@ namespace Karibes.App.ViewModels
                 LimiteCredito = 0,
                 SaldoDevedor = 0,
                 TotalPago = 0,
+                DataVencimentoCredito = null,
                 DataCadastro = DateTime.Now,
                 DataUltimaAtualizacao = DateTime.Now,
                 Ativo = true,
@@ -273,6 +311,7 @@ namespace Karibes.App.ViewModels
                 LimiteCredito = cliente.LimiteCredito,
                 SaldoDevedor = cliente.SaldoDevedor,
                 TotalPago = cliente.TotalPago,
+                DataVencimentoCredito = cliente.DataVencimentoCredito,
                 DataCadastro = cliente.DataCadastro,
                 DataUltimaAtualizacao = cliente.DataUltimaAtualizacao,
                 Ativo = cliente.Ativo,
@@ -294,7 +333,7 @@ namespace Karibes.App.ViewModels
             try
             {
                 // Carrega compras
-                var compras = _vendaService.ObterVendasPorCliente(clienteId);
+                var compras = _vendaRepository.ObterVendasPorCliente(clienteId);
                 ComprasCliente.Clear();
                 foreach (var compra in compras)
                 {
@@ -302,7 +341,17 @@ namespace Karibes.App.ViewModels
                 }
 
                 // Carrega histórico de crédito (pagamentos)
-                var historico = _creditoService.ObterHistoricoPorCliente(clienteId);
+                var historico = _financeiroRepository
+                    .ObterLancamentos(DateTime.MinValue, DateTime.MaxValue)
+                    .Where(l => l.Origem == "Pagamento de fiado" && l.OrigemId == clienteId)
+                    .Select(l => new HistoricoCredito
+                    {
+                        ClienteId = clienteId,
+                        DataMovimento = l.DataPagamento ?? l.DataLancamento,
+                        TipoMovimento = "Pagamento",
+                        Valor = l.Valor,
+                        Observacoes = l.Observacoes
+                    });
                 HistoricoPagamentos.Clear();
                 foreach (var item in historico.Where(h => h.TipoMovimento == "Pagamento").OrderByDescending(h => h.DataMovimento))
                 {
@@ -338,14 +387,12 @@ namespace Karibes.App.ViewModels
                     return;
                 }
 
-                // Registra pagamento via CreditoService
-                _creditoService.RegistrarPagamento(ClienteEditando, ValorPagamento, ObservacaoPagamento);
-
-                // Atualiza TotalPago
-                ClienteEditando.TotalPago += ValorPagamento;
-
-                // Salva cliente atualizado
-                _clienteService.Salvar(ClienteEditando);
+                // Registra pagamento no crédito e gera a receita correspondente no financeiro.
+                _financeiroRepository.RegistrarPagamentoFiado(
+                    ClienteEditando,
+                    ValorPagamento,
+                    ObservacaoPagamento,
+                    DataPagamento);
 
                 // Limpa campos
                 ValorPagamento = 0;
@@ -359,7 +406,7 @@ namespace Karibes.App.ViewModels
                 CarregarClientes();
 
                 // Atualiza ClienteEditando com dados atualizados
-                var clienteAtualizado = _clienteService.ObterPorId(ClienteEditando.Id);
+                var clienteAtualizado = _clienteRepository.ObterPorId(ClienteEditando.Id);
                 if (clienteAtualizado != null)
                 {
                     ClienteEditando.SaldoDevedor = clienteAtualizado.SaldoDevedor;
@@ -393,8 +440,7 @@ namespace Karibes.App.ViewModels
                     return;
                 }
 
-                // Salva no ClienteService
-                _clienteService.Salvar(ClienteEditando);
+                _clienteRepository.Salvar(ClienteEditando);
                 
                 // Recarrega a lista para garantir sincronização
                 CarregarClientes();
@@ -421,4 +467,3 @@ namespace Karibes.App.ViewModels
         }
     }
 }
-

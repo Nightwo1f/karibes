@@ -14,7 +14,7 @@
 
         <!-- Cabeçalho -->
         <Border Grid.Row="0" 
-                Background="{StaticResource PanelBrush}" 
+                Background="{DynamicResource PanelBrush}" 
                 Padding="20,15"
                 Margin="0,0,0,10">
             <Grid>
@@ -27,7 +27,7 @@
                            Text="👥 Clientes" 
                            FontSize="24" 
                            FontWeight="Bold"
-                           Foreground="{StaticResource ForegroundBrush}"
+                           Foreground="{DynamicResource ForegroundBrush}"
                            VerticalAlignment="Center"/>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -35,11 +35,15 @@
                             Style="{StaticResource PrimaryButton}"
                             Command="{Binding NovoClienteCommand}"
                             Margin="5,0"/>
-                    <Button Content="🔄 Atualizar" 
-                            Style="{StaticResource PrimaryButton}"
-                            Command="{Binding AtualizarCommand}"
-                            Margin="5,0"/>
-                </StackPanel>
+	                    <Button Content="🔄 Atualizar" 
+	                            Style="{StaticResource PrimaryButton}"
+	                            Command="{Binding AtualizarCommand}"
+	                            Margin="5,0"/>
+	                    <Button Content="Exportar PDF" 
+	                            Style="{StaticResource SecondaryButton}"
+	                            Command="{Binding ExportarPdfCommand}"
+	                            Margin="5,0"/>
+	                </StackPanel>
             </Grid>
         </Border>
 
@@ -67,8 +71,8 @@
             <!-- LISTA DE CLIENTES -->
             <!-- ============================================ -->
             <Border Grid.Column="0" 
-                    Background="{StaticResource SecondaryBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource SecondaryBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     Margin="0,0,10,0"
                     Padding="10">
@@ -76,13 +80,14 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="2*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <!-- Filtros -->
                     <StackPanel Grid.Row="0" Margin="0,0,0,10">
                         <TextBlock Text="Buscar" 
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding TextoBusca, UpdateSourceTrigger=PropertyChanged}"                                
                                  Style="{StaticResource ModernTextBox}"
@@ -90,7 +95,7 @@
                                  Tag="Buscar por nome, CPF/CNPJ, telefone ou ID..."/>
 
                         <TextBlock Text="Status" 
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <ComboBox SelectedValue="{Binding StatusSelecionado}"
                                   SelectedValuePath="Content"
@@ -114,8 +119,22 @@
                               EnableColumnVirtualization="True"
                               VirtualizingPanel.IsVirtualizing="True"
                               VirtualizingPanel.VirtualizationMode="Recycling"
-                              GridLinesVisibility="All"
-                              HeadersVisibility="Column">
+	                              GridLinesVisibility="All"
+	                              HeadersVisibility="Column">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DividaVencida}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource ErrorRedBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource WhiteBrush}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DividaProximaVencimento}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource WarningOrangeBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick" Command="{Binding EditarClienteCommand}"/>
                         </DataGrid.InputBindings>
@@ -144,7 +163,7 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Crédito Disponível" 
+	                            <DataGridTextColumn Header="Crédito Disponível" 
                                                 Width="130">
                                 <DataGridTextColumn.Binding>
                                     <MultiBinding StringFormat="R$ {}{0:N2}">
@@ -161,20 +180,52 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridCheckBoxColumn Header="Ativo" 
-                                                    Binding="{Binding Ativo}" 
-                                                    Width="60"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </Border>
+	                            <DataGridCheckBoxColumn Header="Ativo" 
+	                                                    Binding="{Binding Ativo}" 
+	                                                    Width="60"/>
+	                        </DataGrid.Columns>
+	                    </DataGrid>
+
+                        <Border Grid.Row="2"
+                                Background="{DynamicResource PanelBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1"
+                                Padding="10"
+                                Margin="0,10,0,0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Compras do cliente selecionado"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource ForegroundBrush}"
+                                           Margin="0,0,0,8"/>
+                                <DataGrid Grid.Row="1"
+                                          ItemsSource="{Binding ComprasCliente}"
+                                          Style="{StaticResource ModernDataGrid}"
+                                          AutoGenerateColumns="False"
+                                          IsReadOnly="True"
+                                          HeadersVisibility="Column">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Data" Binding="{Binding DataVenda, StringFormat='{}{0:dd/MM/yyyy}'}" Width="95"/>
+                                        <DataGridTextColumn Header="Venda" Binding="{Binding NumeroVenda}" Width="90"/>
+                                        <DataGridTextColumn Header="Pagamento" Binding="{Binding FormaPagamento}" Width="110"/>
+                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="90"/>
+                                        <DataGridTextColumn Header="Total" Binding="{Binding ValorTotal, StringFormat='R$ {}{0:N2}'}" Width="110"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </Border>
+	                </Grid>
+	            </Border>
 
             <!-- ============================================ -->
             <!-- FORMULÁRIO DE EDIÇÃO -->
             <!-- ============================================ -->
             <Border Grid.Column="1" 
-                    Background="{StaticResource SecondaryBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource SecondaryBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     Padding="20"
                     Margin="10,0,0,0">
@@ -193,12 +244,12 @@
                         <TextBlock Text="Dados do Cliente" 
                                    FontSize="18" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,20"/>
 
                         <!-- Nome / Razão Social -->
                         <TextBlock Text="Nome / Razão Social *" 
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding ClienteEditando.Nome, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource ModernTextBox}"
@@ -233,14 +284,14 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Telefone" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ClienteEditando.Telefone, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource ModernTextBox}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="Celular" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ClienteEditando.Celular, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource ModernTextBox}"/>
@@ -249,7 +300,7 @@
 
                         <!-- Email -->
                         <TextBlock Text="Email" 
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding ClienteEditando.Email, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource ModernTextBox}"
@@ -257,21 +308,28 @@
 
                         <!-- Limite de Crédito -->
                         <TextBlock Text="Limite de Crédito" 
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
-                        <TextBox Text="{Binding ClienteEditando.LimiteCredito, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding ClienteEditando.LimiteCredito, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
                                  Style="{StaticResource ModernTextBox}"
                                  Margin="0,0,0,15"/>
+
+                        <TextBlock Text="Vencimento do cr�dito" 
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,5"/>
+                        <DatePicker SelectedDate="{Binding ClienteEditando.DataVencimentoCredito}"
+                                    Style="{StaticResource ModernDatePicker}"
+                                    Margin="0,0,0,15"/>
 
                         <!-- Status -->
                         <CheckBox Content="Cliente Ativo" 
                                   IsChecked="{Binding ClienteEditando.Ativo}"
-                                  Foreground="{StaticResource ForegroundBrush}"
+                                  Foreground="{DynamicResource ForegroundBrush}"
                                   Margin="0,0,0,15"/>
 
                         <!-- Observações -->
                         <TextBlock Text="Observações" 
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding ClienteEditando.Observacoes, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource ModernTextBox}"
@@ -281,8 +339,8 @@
                                  Margin="0,0,0,20"/>
 
                         <!-- Informações Financeiras -->
-                        <Border Background="{StaticResource PanelBrush}"
-                                BorderBrush="{StaticResource BorderBrush}"
+                        <Border Background="{DynamicResource PanelBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="4"
                                 Padding="15"
@@ -291,7 +349,7 @@
                                 <TextBlock Text="Informações Financeiras" 
                                            FontSize="16" 
                                            FontWeight="Bold"
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,10"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -301,7 +359,7 @@
                                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
                                         <TextBlock Text="Saldo Devedor" 
                                                    FontSize="12"
-                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"
                                                    Margin="0,0,0,3"/>
                                         <TextBlock Text="{Binding ClienteEditando.SaldoDevedor, StringFormat='R$ {}{0:N2}'}" 
                                                    FontSize="18" 
@@ -311,7 +369,7 @@
                                     <StackPanel Grid.Column="1">
                                         <TextBlock Text="Total Pago" 
                                                    FontSize="12"
-                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"
                                                    Margin="0,0,0,3"/>
                                         <TextBlock Text="{Binding ClienteEditando.TotalPago, StringFormat='R$ {}{0:N2}'}" 
                                                    FontSize="18" 
@@ -323,8 +381,8 @@
                         </Border>
 
                         <!-- Abatimento de Dívida -->
-                        <Border Background="{StaticResource SecondaryBackgroundBrush}"
-                                BorderBrush="{StaticResource BorderBrush}"
+                        <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="4"
                                 Padding="15"
@@ -343,25 +401,25 @@
                                 <TextBlock Text="💳 Abater Dívida" 
                                            FontSize="16" 
                                            FontWeight="Bold"
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,15"/>
                                 
                                 <TextBlock Text="Valor do Pagamento" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding ValorPagamento, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox Text="{Binding ValorPagamento, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
                                          Style="{StaticResource ModernTextBox}"
                                          Margin="0,0,0,10"/>
 
                                 <TextBlock Text="Data do Pagamento" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <DatePicker SelectedDate="{Binding DataPagamento}"
                                              Style="{StaticResource ModernDatePicker}"
                                              Margin="0,0,0,10"/>
 
                                 <TextBlock Text="Observação" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ObservacaoPagamento, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource ModernTextBox}"
@@ -382,7 +440,7 @@
                         <TextBlock Text="📦 Histórico de Compras" 
                                    FontSize="16" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,10"/>
                         <DataGrid ItemsSource="{Binding ComprasCliente}"
                                   Style="{StaticResource ModernDataGrid}"
@@ -429,8 +487,8 @@
                                     Command="{Binding SalvarClienteCommand}"
                                     Margin="0,0,10,0"
                                     Padding="20,8"/>
-                            <Button Content="❌ Cancelar" 
-                                    Style="{StaticResource PrimaryButton}"
+                            <Button Content="Cancelar" 
+                                    Style="{StaticResource SecondaryButton}"
                                     Command="{Binding CancelarEdicaoCommand}"
                                     Padding="20,8"/>
                         </StackPanel>
@@ -440,3 +498,5 @@
         </Grid>
     </Grid>
 </UserControl>
+
+

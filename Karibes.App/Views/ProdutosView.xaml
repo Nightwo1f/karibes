@@ -13,7 +13,7 @@
 
         <!-- Cabeçalho -->
         <Border Grid.Row="0" 
-                Background="{StaticResource PanelBrush}" 
+                Background="{DynamicResource PanelBrush}" 
                 Padding="20,15"
                 Margin="0,0,0,10">
             <Grid>
@@ -26,7 +26,7 @@
                            Text="📦 Gestão de Produtos" 
                            FontSize="24" 
                            FontWeight="Bold"
-                           Foreground="{StaticResource ForegroundBrush}"
+                           Foreground="{DynamicResource ForegroundBrush}"
                            VerticalAlignment="Center"/>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -37,6 +37,10 @@
                     <Button Content="🔄 Atualizar" 
                             Style="{StaticResource PrimaryButton}"
                             Command="{Binding CarregarProdutosCommand}"
+                            Margin="5,0"/>
+                    <Button Content="Exportar PDF" 
+                            Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ExportarPdfCommand}"
                             Margin="5,0"/>
                 </StackPanel>
             </Grid>
@@ -55,8 +59,8 @@
             <!-- LISTA DE PRODUTOS -->
             <!-- ============================================ -->
             <Border Grid.Column="0" 
-                    Background="{StaticResource SecondaryBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource SecondaryBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     Margin="0,0,10,0"
                     Padding="10">
@@ -76,7 +80,7 @@
                                 <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
                                     <Style.Triggers>
                                         <Trigger Property="Text" Value="">
-                                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
@@ -84,7 +88,7 @@
                         </TextBox>
                         <CheckBox Content="Apenas ativos"
                                   IsChecked="{Binding MostrarApenasAtivos}"
-                                  Foreground="{StaticResource ForegroundBrush}"
+                                  Foreground="{DynamicResource ForegroundBrush}"
                                   VerticalAlignment="Center"/>
                     </StackPanel>
 
@@ -106,6 +110,9 @@
                             <DataGridTextColumn Header="Nome" 
                                                 Binding="{Binding Nome}" 
                                                 Width="*"/>
+                            <DataGridTextColumn Header="Categoria"
+                                                Binding="{Binding Categoria}"
+                                                Width="120"/>
                             <DataGridTextColumn Header="Preço" 
                                                 Binding="{Binding Preco, StringFormat=C2}">
                                 <DataGridTextColumn.ElementStyle>
@@ -144,8 +151,8 @@
             <!-- FORMULÁRIO DE EDIÇÃO -->
             <!-- ============================================ -->
             <Border Grid.Column="1" 
-                    Background="{StaticResource SecondaryBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource SecondaryBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     Padding="20">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -153,12 +160,12 @@
                         <TextBlock Text="Dados do Produto" 
                                    FontSize="18" 
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,20"/>
 
                         <!-- Código -->
                         <TextBlock Text="Código *" 
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding ProdutoEditando.Codigo, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource ModernTextBox}"
@@ -166,7 +173,7 @@
 
                         <!-- Nome -->
                         <TextBlock Text="Nome *" 
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding ProdutoEditando.Nome, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource ModernTextBox}"
@@ -174,13 +181,20 @@
 
                         <!-- Descrição -->
                         <TextBlock Text="Descrição" 
-                                   Foreground="{StaticResource ForegroundBrush}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding ProdutoEditando.Descricao, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource ModernTextBox}"
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"
                                  MinHeight="60"
+                                 Margin="0,0,0,15"/>
+
+                        <TextBlock Text="Categoria" 
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding ProdutoEditando.Categoria, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBox}"
                                  Margin="0,0,0,15"/>
 
                         <!-- Preço e Custo -->
@@ -193,17 +207,17 @@
 
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Preço de Venda *" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding ProdutoEditando.Preco, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox Text="{Binding ProdutoEditando.Preco, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
                                          Style="{StaticResource ModernTextBox}"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="Preço de Custo *" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding ProdutoEditando.Custo, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox Text="{Binding ProdutoEditando.Custo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
                                          Style="{StaticResource ModernTextBox}"/>
                             </StackPanel>
                         </Grid>
@@ -218,17 +232,17 @@
 
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Estoque Atual *" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding ProdutoEditando.Estoque, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox Text="{Binding ProdutoEditando.Estoque, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
                                          Style="{StaticResource ModernTextBox}"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="Estoque Mínimo *" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding ProdutoEditando.EstoqueMinimo, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox Text="{Binding ProdutoEditando.EstoqueMinimo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
                                          Style="{StaticResource ModernTextBox}"/>
                             </StackPanel>
                         </Grid>
@@ -243,7 +257,7 @@
 
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Unidade" 
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <ComboBox SelectedValue="{Binding ProdutoEditando.Unidade}"
                                           SelectedValuePath="Content"
@@ -259,26 +273,26 @@
                             <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
                                 <CheckBox Content="Produto Ativo"
                                           IsChecked="{Binding ProdutoEditando.Ativo}"
-                                          Foreground="{StaticResource ForegroundBrush}"
+                                          Foreground="{DynamicResource ForegroundBrush}"
                                           Margin="0,20,0,0"/>
                             </StackPanel>
                         </Grid>
 
                         <!-- Informações de Data -->
-                        <Border Background="{StaticResource BackgroundBrush}"
+                        <Border Background="{DynamicResource BackgroundBrush}"
                                 Padding="10"
                                 CornerRadius="4"
                                 Margin="0,0,0,20">
                             <StackPanel>
                                 <TextBlock Text="Informações do Cadastro" 
                                            FontWeight="Bold"
-                                           Foreground="{StaticResource ForegroundBrush}"
+                                           Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,10"/>
                                 <TextBlock Text="{Binding ProdutoEditando.DataCadastro, StringFormat='Data de Cadastro: {}{0:dd/MM/yyyy HH:mm}'}"
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            Margin="0,0,0,5"/>
                                 <TextBlock Text="{Binding ProdutoEditando.DataUltimaAtualizacao, StringFormat='Última Atualização: {}{0:dd/MM/yyyy HH:mm}'}"
-                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
                             </StackPanel>
                         </Border>
 
@@ -291,24 +305,13 @@
                                     Command="{Binding SalvarProdutoCommand}"
                                     Padding="20,10"
                                     Margin="0,0,10,0"/>
-                            <Button Content="🗑️ Excluir" 
+                            <Button Content="Excluir" 
+                                    Style="{StaticResource DangerButton}"
                                     Command="{Binding ExcluirProdutoCommand}"
                                     Padding="20,10"
-                                    Margin="0,0,10,0">
-                                <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-                                        <Setter Property="Background" Value="{StaticResource ErrorRedBrush}"/>
-                                        <Setter Property="Foreground" Value="{StaticResource WhiteBrush}"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="{StaticResource ErrorRedDarkBrush}"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
-                            <Button Content="❌ Cancelar" 
-                                    Style="{StaticResource PrimaryButton}"
+                                    Margin="0,0,10,0"/>
+                            <Button Content="Cancelar" 
+                                    Style="{StaticResource SecondaryButton}"
                                     Command="{Binding CancelarEdicaoCommand}"
                                     Padding="20,10"/>
                         </StackPanel>
@@ -318,4 +321,5 @@
         </Grid>
     </Grid>
 </UserControl>
+
 
