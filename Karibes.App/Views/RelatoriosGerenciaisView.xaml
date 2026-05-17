@@ -95,11 +95,15 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Data Início" Foreground="{DynamicResource ForegroundBrush}" FontSize="13" Margin="0,0,0,6"/>
-                                <DatePicker SelectedDate="{Binding DataInicio}" Style="{StaticResource ModernDatePicker}"/>
+                                <DatePicker SelectedDate="{Binding DataInicio}"
+                                            ToolTip="Data inicial do relatorio"
+                                            Style="{StaticResource ModernDatePicker}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="Data Fim" Foreground="{DynamicResource ForegroundBrush}" FontSize="13" Margin="0,0,0,6"/>
-                                <DatePicker SelectedDate="{Binding DataFim}" Style="{StaticResource ModernDatePicker}"/>
+                                <DatePicker SelectedDate="{Binding DataFim}"
+                                            ToolTip="Data final do relatorio"
+                                            Style="{StaticResource ModernDatePicker}"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>

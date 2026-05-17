@@ -77,6 +77,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <DatePicker Grid.Column="0"
+                                     ToolTip="Data inicial do filtro"
                                         SelectedDate="{Binding FiltroDataInicio}"
                                         Style="{StaticResource ModernDatePicker}"/>
                             <TextBlock Grid.Column="1" 
@@ -85,6 +86,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        HorizontalAlignment="Center"/>
                             <DatePicker Grid.Column="2"
+                                     ToolTip="Data final do filtro"
                                         SelectedDate="{Binding FiltroDataFim}"
                                         Style="{StaticResource ModernDatePicker}"/>
                         </Grid>
@@ -97,6 +99,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <ComboBox Grid.Column="0"
+                                     ToolTip="Filtrar lancamentos por tipo"
                                       SelectedValue="{Binding FiltroTipo}"
                                       SelectedValuePath="Content"
                                       Style="{StaticResource ModernComboBox}"
@@ -106,6 +109,7 @@
                                 <ComboBoxItem Content="Despesa"/>
                             </ComboBox>
                             <ComboBox Grid.Column="2"
+                                     ToolTip="Filtrar lancamentos por status"
                                       SelectedValue="{Binding FiltroStatus}"
                                       SelectedValuePath="Content"
                                       Style="{StaticResource ModernComboBox}">
@@ -118,6 +122,7 @@
 
                         <!-- Categoria -->
                         <TextBox Text="{Binding FiltroCategoria, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Buscar por categoria..."
                                  Style="{StaticResource ModernTextBox}"
                                  Tag="Buscar por categoria..."/>
                     </StackPanel>
@@ -307,10 +312,12 @@
                         <!-- Tipo de Lançamento -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
                             <RadioButton Content="➕ Receita" 
+                                     ToolTip="Escolher se o lancamento e uma receita"
                                          IsChecked="{Binding IsCadastroReceita}"
                                          Foreground="{DynamicResource ForegroundBrush}"
                                          Margin="0,0,15,0"/>
                             <RadioButton Content="➖ Despesa" 
+                                     ToolTip="Escolher se o lancamento e uma receita"
                                          IsChecked="{Binding IsCadastroReceita, Converter={StaticResource InverseBooleanConverter}}"
                                          Foreground="{DynamicResource ForegroundBrush}"/>
                         </StackPanel>
@@ -322,6 +329,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBox Text="{Binding CategoriaNova}"
+                                     ToolTip="Categoria do lancamento financeiro"
                                      Style="{StaticResource ModernTextBox}"
                                      Margin="0,0,0,15"/>
 
@@ -330,6 +338,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBox Text="{Binding DescricaoNova}"
+                                     ToolTip="Descricao do lancamento financeiro"
                                      Style="{StaticResource ModernTextBox}"
                                      Margin="0,0,0,15"/>
 
@@ -338,6 +347,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBox Text="{Binding ValorNovo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
+                                     ToolTip="Valor do lancamento financeiro"
                                      Style="{StaticResource ModernTextBox}"
                                      Margin="0,0,0,15"/>
 
@@ -346,6 +356,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <DatePicker SelectedDate="{Binding DataVencimentoNova}"
+                                     ToolTip="Data de vencimento do lancamento"
                                         Style="{StaticResource ModernDatePicker}"
                                         Margin="0,0,0,15"/>
 
@@ -354,6 +365,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <ComboBox SelectedValue="{Binding StatusNovo}"
+                                     ToolTip="Status do lancamento financeiro"
                                       SelectedValuePath="Content"
                                       Style="{StaticResource ModernComboBox}"
                                       Margin="0,0,0,15">
@@ -366,6 +378,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <ComboBox SelectedValue="{Binding FormaPagamentoNova}"
+                                     ToolTip="Forma de pagamento do lancamento"
                                       SelectedValuePath="Content"
                                       Style="{StaticResource ModernComboBox}"
                                       Margin="0,0,0,15">
@@ -379,6 +392,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBox Text="{Binding ObservacoesNova}"
+                                     ToolTip="Observacoes do lancamento financeiro"
                                      Style="{StaticResource ModernTextBox}"
                                      TextWrapping="Wrap"
                                      AcceptsReturn="True"

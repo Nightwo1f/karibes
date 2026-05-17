@@ -61,6 +61,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <DatePicker SelectedDate="{Binding DataInicio}"
+                                     ToolTip="Data inicial do relatorio"
                                          Style="{StaticResource ModernDatePicker}"/>
                         </StackPanel>
 
@@ -69,6 +70,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <DatePicker SelectedDate="{Binding DataFim}"
+                                     ToolTip="Data final do relatorio"
                                          Style="{StaticResource ModernDatePicker}"/>
                         </StackPanel>
                     </Grid>

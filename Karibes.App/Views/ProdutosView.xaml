@@ -74,6 +74,7 @@
                     <!-- Filtros -->
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                         <TextBox Text="{Binding FiltroTexto, UpdateSourceTrigger=PropertyChanged}"                                
+                                 ToolTip="Buscar produtos por codigo, nome ou categoria"
                                  Width="200"
                                  Margin="0,0,10,0">
                             <TextBox.Style>
@@ -87,6 +88,7 @@
                             </TextBox.Style>
                         </TextBox>
                         <CheckBox Content="Apenas ativos"
+                                 ToolTip="Mostrar somente produtos ativos"
                                   IsChecked="{Binding MostrarApenasAtivos}"
                                   Foreground="{DynamicResource ForegroundBrush}"
                                   VerticalAlignment="Center"/>
@@ -168,6 +170,7 @@
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding ProdutoEditando.Codigo, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Codigo do produto"
                                  Style="{StaticResource ModernTextBox}"
                                  Margin="0,0,0,15"/>
 
@@ -176,6 +179,7 @@
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding ProdutoEditando.Nome, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Nome do produto"
                                  Style="{StaticResource ModernTextBox}"
                                  Margin="0,0,0,15"/>
 
@@ -184,6 +188,7 @@
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding ProdutoEditando.Descricao, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Descricao do produto"
                                  Style="{StaticResource ModernTextBox}"
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"
@@ -194,6 +199,7 @@
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <TextBox Text="{Binding ProdutoEditando.Categoria, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Categoria do produto"
                                  Style="{StaticResource ModernTextBox}"
                                  Margin="0,0,0,15"/>
 
@@ -210,6 +216,7 @@
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ProdutoEditando.Preco, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
+                                         ToolTip="Preco de venda do produto"
                                          Style="{StaticResource ModernTextBox}"/>
                             </StackPanel>
 
@@ -218,6 +225,7 @@
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ProdutoEditando.Custo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
+                                         ToolTip="Custo de compra do produto"
                                          Style="{StaticResource ModernTextBox}"/>
                             </StackPanel>
                         </Grid>
@@ -235,6 +243,7 @@
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ProdutoEditando.Estoque, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
+                                         ToolTip="Quantidade atual em estoque"
                                          Style="{StaticResource ModernTextBox}"/>
                             </StackPanel>
 
@@ -243,6 +252,7 @@
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ProdutoEditando.EstoqueMinimo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
+                                         ToolTip="Quantidade minima para alerta de estoque"
                                          Style="{StaticResource ModernTextBox}"/>
                             </StackPanel>
                         </Grid>
@@ -260,6 +270,7 @@
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <ComboBox SelectedValue="{Binding ProdutoEditando.Unidade}"
+                                         ToolTip="Unidade de medida do produto"
                                           SelectedValuePath="Content"
                                           Style="{StaticResource ModernComboBox}">
                                     <ComboBoxItem Content="UN"/>
@@ -272,6 +283,7 @@
 
                             <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
                                 <CheckBox Content="Produto Ativo"
+                                         ToolTip="Indica se o produto esta ativo"
                                           IsChecked="{Binding ProdutoEditando.Ativo}"
                                           Foreground="{DynamicResource ForegroundBrush}"
                                           Margin="0,20,0,0"/>

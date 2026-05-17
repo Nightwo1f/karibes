@@ -63,6 +63,7 @@
                                Foreground="{DynamicResource ForegroundBrush}"
                                Margin="0,0,0,5"/>
                     <TextBox Text="{Binding TextoBusca, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Buscar por nome, CPF/CNPJ, telefone ou ID..."
                              Style="{StaticResource ModernTextBox}"
                              Margin="0,0,0,10"
                              Tag="Buscar por nome, CPF/CNPJ, telefone ou ID..."/>
@@ -71,6 +72,7 @@
                                Foreground="{DynamicResource ForegroundBrush}"
                                Margin="0,0,0,5"/>
                     <ComboBox SelectedValue="{Binding StatusSelecionado}"
+                             ToolTip="Filtrar clientes por status"
                               SelectedValuePath="Content"
                               Style="{StaticResource ModernComboBox}"
                               Width="180"
@@ -225,6 +227,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBox Text="{Binding ClienteEditando.Nome, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Nome completo do cliente"
                                      Style="{StaticResource ModernTextBox}"
                                      Margin="0,0,0,12"/>
 
@@ -238,6 +241,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <ComboBox SelectedValue="{Binding ClienteEditando.TipoDocumento}"
+                                             ToolTip="Tipo de documento do cliente"
                                               SelectedValuePath="Content"
                                               Style="{StaticResource ModernComboBox}">
                                         <ComboBoxItem Content="CPF"/>
@@ -249,6 +253,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.Documento, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Numero do CPF ou CNPJ do cliente"
                                              Style="{StaticResource ModernTextBox}"/>
                                 </StackPanel>
                             </Grid>
@@ -266,6 +271,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.Telefone, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Telefone fixo do cliente"
                                              Style="{StaticResource ModernTextBox}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2">
@@ -273,6 +279,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.Celular, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Celular do cliente"
                                              Style="{StaticResource ModernTextBox}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="4">
@@ -280,6 +287,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.Email, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Email do cliente"
                                              Style="{StaticResource ModernTextBox}"/>
                                 </StackPanel>
                             </Grid>
@@ -302,6 +310,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.CEP, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="CEP do endereco do cliente"
                                              Style="{StaticResource ModernTextBox}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">
@@ -309,6 +318,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.Endereco, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Rua, avenida ou logradouro do cliente"
                                              Style="{StaticResource ModernTextBox}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="3">
@@ -316,6 +326,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.Numero, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Numero do endereco do cliente"
                                              Style="{StaticResource ModernTextBox}"/>
                                 </StackPanel>
                             </Grid>
@@ -333,6 +344,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.Bairro, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Bairro do cliente"
                                              Style="{StaticResource ModernTextBox}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2">
@@ -340,6 +352,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.Cidade, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Cidade do cliente"
                                              Style="{StaticResource ModernTextBox}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="4">
@@ -347,6 +360,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.Estado, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Estado do cliente"
                                              Style="{StaticResource ModernTextBox}"
                                              MaxLength="2"/>
                                 </StackPanel>
@@ -356,6 +370,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBox Text="{Binding ClienteEditando.Complemento, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Complemento do endereco do cliente"
                                      Style="{StaticResource ModernTextBox}"
                                      Margin="0,0,0,12"/>
 
@@ -378,6 +393,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ClienteEditando.LimiteCredito, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
+                                             ToolTip="Limite de credito autorizado para o cliente"
                                              Style="{StaticResource ModernTextBox}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2">
@@ -385,6 +401,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <DatePicker SelectedDate="{Binding ClienteEditando.DataVencimentoCredito}"
+                                             ToolTip="Data de vencimento do credito em aberto"
                                                 Style="{StaticResource ModernDatePicker}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="4">
@@ -392,6 +409,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,12"/>
                                     <CheckBox Content="Cliente Ativo"
+                                             ToolTip="Indica se o cliente esta ativo"
                                               IsChecked="{Binding ClienteEditando.Ativo}"
                                               Foreground="{DynamicResource ForegroundBrush}"/>
                                 </StackPanel>
@@ -465,6 +483,7 @@
                                                        Foreground="{DynamicResource ForegroundBrush}"
                                                        Margin="0,0,0,5"/>
                                             <TextBox Text="{Binding ValorPagamento, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyConverter}}"
+                                                     ToolTip="Valor recebido para abater a divida do cliente"
                                                      Style="{StaticResource ModernTextBox}"/>
                                         </StackPanel>
                                         <StackPanel Grid.Column="2">
@@ -472,6 +491,7 @@
                                                        Foreground="{DynamicResource ForegroundBrush}"
                                                        Margin="0,0,0,5"/>
                                             <DatePicker SelectedDate="{Binding DataPagamento}"
+                                                     ToolTip="Data em que o pagamento foi recebido"
                                                         Style="{StaticResource ModernDatePicker}"/>
                                         </StackPanel>
                                     </Grid>
@@ -480,6 +500,7 @@
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Margin="0,0,0,5"/>
                                     <TextBox Text="{Binding ObservacaoPagamento, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Observacao sobre o pagamento recebido"
                                              Style="{StaticResource ModernTextBox}"
                                              TextWrapping="Wrap"
                                              AcceptsReturn="True"
@@ -498,6 +519,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,5"/>
                             <TextBox Text="{Binding ClienteEditando.Observacoes, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Observacoes gerais sobre o cliente"
                                      Style="{StaticResource ModernTextBox}"
                                      TextWrapping="Wrap"
                                      AcceptsReturn="True"

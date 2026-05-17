@@ -59,6 +59,7 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,10"/>
                             <TextBox Text="{Binding NumeroVendaBusca}"
+                                     ToolTip="Número da venda (ex: VENDA-20240101120000-1234)"
                                      Style="{StaticResource ModernTextBox}"
                                      Tag="Número da venda (ex: VENDA-20240101120000-1234)"
                                      Margin="0,0,10,0"/>
@@ -178,10 +179,12 @@
                                    Margin="0,0,0,10"/>
                         <StackPanel Orientation="Horizontal">
                             <RadioButton Content="📤 Devolução" 
+                                     ToolTip="Registrar devolucao da venda"
                                          IsChecked="{Binding IsModoDevolucao}"
                                          Foreground="{DynamicResource ForegroundBrush}"
                                          Margin="0,0,15,0"/>
                             <RadioButton Content="🔄 Troca" 
+                                     ToolTip="Registrar troca de produto"
                                          IsChecked="{Binding IsModoDevolucao, Converter={StaticResource InverseBooleanConverter}}"
                                          Foreground="{DynamicResource ForegroundBrush}"/>
                         </StackPanel>
@@ -305,6 +308,7 @@
                             </Grid.ColumnDefinitions>
 
                             <ComboBox Grid.Column="0"
+                                     ToolTip="Produto que sera adicionado ao carrinho"
                                       SelectedItem="{Binding ProdutoSelecionado}"
                                       ItemsSource="{Binding ProdutosDisponiveis}"
                                       Style="{StaticResource ModernComboBox}"
@@ -329,6 +333,7 @@
                             </ComboBox>
 
                             <TextBox Grid.Column="1"
+                                     ToolTip="Quantidade do produto para adicionar a troca"
                                      Text="{Binding QuantidadeAdicionar}"
                                      Style="{StaticResource ModernTextBox}"
                                      Margin="0,0,10,0"/>
@@ -341,6 +346,7 @@
 
                         <!-- Busca de Produto -->
                         <TextBox Text="{Binding BuscaProduto, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Buscar produto por nome ou código..."
                                  Style="{StaticResource ModernTextBox}"
                                  Margin="0,0,0,15"
                                  Tag="Buscar produto por nome ou código..."/>
@@ -511,6 +517,7 @@
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,10"/>
                         <TextBox Text="{Binding Observacao}"
+                                 ToolTip="Observacao sobre a troca ou devolucao"
                                  Style="{StaticResource ModernTextBox}"
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"

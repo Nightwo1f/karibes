@@ -83,6 +83,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <DatePicker Grid.Column="0"
+                                     ToolTip="Data inicial do filtro"
                                         SelectedDate="{Binding FiltroDataInicio}"
                                         Style="{StaticResource ModernDatePicker}"/>
                             <TextBlock Grid.Column="1" 
@@ -91,18 +92,21 @@
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        HorizontalAlignment="Center"/>
                             <DatePicker Grid.Column="2"
+                                     ToolTip="Data final do filtro"
                                         SelectedDate="{Binding FiltroDataFim}"
                                         Style="{StaticResource ModernDatePicker}"/>
                         </Grid>
 
                         <!-- Cliente -->
                         <TextBox Text="{Binding FiltroCliente, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Buscar cliente..."
                                  Style="{StaticResource ModernTextBox}"
                                  Margin="0,0,0,10"
                                  Tag="Buscar cliente..."/>
 
                         <!-- Forma de Pagamento -->
                         <ComboBox SelectedValue="{Binding FiltroFormaPagamento}"
+                                 ToolTip="Filtrar vendas por forma de pagamento"
                                   SelectedValuePath="Content"
                                   Style="{StaticResource ModernComboBox}"
                                   Margin="0,0,0,10">
@@ -115,6 +119,7 @@
 
                         <!-- Status -->
                         <ComboBox SelectedValue="{Binding FiltroStatus}"
+                                 ToolTip="Filtrar lancamentos por status"
                                   SelectedValuePath="Content"
                                   Style="{StaticResource ModernComboBox}">
                             <ComboBoxItem Content="Todas"/>
@@ -204,6 +209,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <ComboBox Grid.Column="0"
+                                     ToolTip="Cliente da venda"
                                       SelectedItem="{Binding ClienteSelecionado}"
                                       ItemsSource="{Binding ClientesDisponiveis}"
                                       Style="{StaticResource ModernComboBox}"
@@ -220,6 +226,7 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                             <TextBox Grid.Column="1"
+                                     ToolTip="Buscar cliente..."
                                      Text="{Binding BuscaCliente, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource ModernTextBox}"
                                      Width="200"
@@ -264,6 +271,7 @@
                             </Grid.ColumnDefinitions>
 
                             <ComboBox Grid.Column="0"
+                                     ToolTip="Produto que sera adicionado ao carrinho"
                                       SelectedItem="{Binding ProdutoSelecionado}"
                                       ItemsSource="{Binding ProdutosDisponiveis}"
                                       Style="{StaticResource ModernComboBox}"
@@ -288,6 +296,7 @@
                             </ComboBox>
 
                             <TextBox Grid.Column="1"
+                                     ToolTip="Quantidade do produto para adicionar ao carrinho"
                                      Text="{Binding QuantidadeAdicionar, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource ModernTextBox}"
                                      Margin="0,0,10,0"/>
@@ -300,6 +309,7 @@
 
                         <!-- Busca de Produto -->
                         <TextBox Text="{Binding BuscaProduto, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Buscar produto por nome ou código..."
                                  Style="{StaticResource ModernTextBox}"
                                  Margin="0,0,0,15"
                                  Tag="Buscar produto por nome ou código..."/>
@@ -382,6 +392,7 @@
                                     <TextBlock Grid.Column="0" Text="Subtotal:" 
                                                Foreground="{DynamicResource ForegroundBrush}"/>
                                     <TextBox Grid.Column="1"
+                                             ToolTip="Subtotal da venda antes do desconto"
                                              Text="{Binding SubtotalVendaTexto, Mode=OneWay}"
                                              Style="{StaticResource ModernTextBox}"
                                              Width="130"
@@ -398,6 +409,7 @@
                                     <TextBlock Grid.Column="0" Text="Desconto:" 
                                                Foreground="{DynamicResource ForegroundBrush}"/>
                                     <TextBox Grid.Column="1"
+                                             ToolTip="Valor de desconto aplicado na venda"
                                              Text="{Binding DescontoVenda, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource ModernTextBox}"
                                              Width="120"
@@ -416,6 +428,7 @@
                                                FontWeight="Bold"
                                                Foreground="{DynamicResource AccentBrush}"/>
                                     <TextBox Grid.Column="1"
+                                             ToolTip="Total final da venda"
                                              Text="{Binding TotalVendaTexto, Mode=OneWay}"
                                              Style="{StaticResource ModernTextBox}"
                                              Width="130"
@@ -434,6 +447,7 @@
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,5"/>
                         <ComboBox SelectedValue="{Binding FormaPagamento}"
+                                 ToolTip="Forma de pagamento da venda"
                                   SelectedValuePath="Content"
                                   Style="{StaticResource ModernComboBox}"
                                   Margin="0,0,0,15">
@@ -455,6 +469,7 @@
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding Vendedor}"
+                                         ToolTip="Nome do vendedor responsavel pela venda"
                                          Style="{StaticResource ModernTextBox}"/>
                             </StackPanel>
 
@@ -463,6 +478,7 @@
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ObservacoesVenda}"
+                                         ToolTip="Observacoes da venda"
                                          Style="{StaticResource ModernTextBox}"
                                          TextWrapping="Wrap"
                                          AcceptsReturn="True"

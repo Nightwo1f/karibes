@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Karibes - Sistema de Gestao" 
-        Height="800" Width="1400"
+        Height="768" Width="1024"
         WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize"
+        WindowState="Normal"
         Background="{DynamicResource BackgroundBrush}">
     <Grid>
         <Grid.ColumnDefinitions>
